@@ -1,0 +1,333 @@
+:root {
+  --preto: #171717;
+  --preto2: #232323;
+  --preto-transp: rgba(23, 23, 23, 0.89);
+  --amarelo: #FFD700;
+  --amarelo-escuro: #C5A100;
+  --cinza: #cccccc;
+  --branco: #fff;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background: var(--preto);
+  color: var(--cinza);
+  min-height: 100vh;
+}
+
+/* Navbar */
+header {
+  background: var(--preto-transp);
+  box-shadow: 0 2px 10px rgba(0,0,0,0.32);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.8rem 6vw;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.logo-area {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logo-img {
+  height: 42px;
+  width: auto;
+  object-fit: contain;
+}
+
+.logo-text {
+  font-weight: bold;
+  font-size: 1.3rem;
+  color: var(--amarelo);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.nav-links {
+  list-style: none;
+  display: flex;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--amarelo);
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s;
+  padding: 8px 18px;
+  border-radius: 5px;
+  font-size: 1.08rem;
+}
+
+.nav-links a:hover,
+.nav-links .active {
+  color: var(--preto2);
+  background: var(--amarelo);
+}
+
+.btn-orcamento {
+  background: var(--amarelo);
+  color: var(--preto2) !important;
+  font-weight: bold;
+  border: 2px solid var(--amarelo);
+  transition: background 0.2s, color 0.2s, border 0.2s;
+  box-shadow: 0 2px 8px rgba(255,215,0,0.12);
+}
+
+.btn-orcamento:hover {
+  background: var(--amarelo-escuro);
+  color: var(--branco) !important;
+  border: 2px solid var(--amarelo-escuro);
+}
+
+/* Banner / Hero */
+.banner {
+  background: linear-gradient(100deg, #232323 65%, #FFD700 100%);
+  min-height: 45vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--amarelo);
+  padding: 2.5rem 0 2rem 0;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.16);
+}
+
+.banner-content {
+  text-align: center;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.banner-content h1 {
+  font-size: 2.3rem;
+  color: var(--amarelo);
+  margin-bottom: 1rem;
+  letter-spacing: 1.5px;
+}
+
+.banner-content p {
+  font-size: 1.25rem;
+  color: var(--branco);
+  margin-bottom: 1.8rem;
+}
+
+.cta-btn {
+  background: var(--amarelo);
+  color: var(--preto2);
+  padding: 0.95rem 2.5rem;
+  font-size: 1.1rem;
+  font-weight: 700;
+  border: none;
+  border-radius: 6px;
+  text-decoration: none;
+  box-shadow: 0 2px 12px rgba(255,215,0,0.13);
+  transition: background 0.2s, color 0.2s;
+}
+
+.cta-btn:hover {
+  background: var(--amarelo-escuro);
+  color: var(--branco);
+}
+
+/* Seções */
+.section {
+  background: var(--preto2);
+  margin: 3rem auto 2rem;
+  padding: 2.5rem 4vw 2rem 4vw;
+  max-width: 950px;
+  border-radius: 13px;
+  box-shadow: 0 4px 32px rgba(0,0,0,0.19);
+}
+
+.section h2 {
+  color: var(--amarelo);
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.7rem;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+/* Quem somos */
+.section p {
+  color: var(--cinza);
+  font-size: 1.13rem;
+  line-height: 1.7;
+  text-align: center;
+}
+
+/* Valores */
+.valores-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+  margin-top: 1.7rem;
+}
+
+.valor-card {
+  background: #1b1b1b;
+  border: 1.5px solid var(--amarelo-escuro);
+  border-radius: 9px;
+  padding: 1.1rem 2.3rem;
+  text-align: center;
+  color: var(--cinza);
+  min-width: 180px;
+  max-width: 220px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(255,215,0,0.03);
+}
+
+.valor-icone {
+  font-size: 2.1rem;
+  margin-bottom: 0.5rem;
+  color: var(--amarelo);
+}
+
+/* Serviços */
+.servicos-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  justify-content: center;
+  margin-top: 1.7rem;
+}
+
+.servico-card {
+  background: #1b1b1b;
+  border: 1.5px solid var(--amarelo-escuro);
+  border-radius: 9px;
+  padding: 1.2rem 2.3rem;
+  text-align: center;
+  color: var(--cinza);
+  min-width: 220px;
+  max-width: 255px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2px 10px rgba(255,215,0,0.03);
+}
+
+.servico-icone {
+  font-size: 2.2rem;
+  margin-bottom: 0.6rem;
+  color: var(--amarelo);
+}
+
+.servico-card h3 {
+  color: var(--amarelo);
+  margin-top: 0.5rem;
+  margin-bottom: 0.6rem;
+  font-size: 1.15rem;
+}
+
+/* Formulário */
+.form-orcamento {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  max-width: 430px;
+  margin: 0 auto;
+}
+
+.form-orcamento label {
+  color: var(--amarelo);
+  font-size: 1.07rem;
+  font-weight: 500;
+  margin-bottom: 0.3rem;
+}
+
+.form-orcamento input,
+.form-orcamento textarea {
+  padding: 0.8rem;
+  border: 1.5px solid var(--amarelo-escuro);
+  background: #171717;
+  color: var(--branco);
+  border-radius: 6px;
+  resize: vertical;
+  font-size: 1rem;
+  transition: border 0.2s;
+}
+
+.form-orcamento input:focus,
+.form-orcamento textarea:focus {
+  border: 2px solid var(--amarelo);
+  outline: none;
+}
+
+.form-orcamento button {
+  background: var(--amarelo);
+  color: var(--preto2);
+  font-size: 1.12rem;
+  font-weight: bold;
+  border: none;
+  padding: 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 2px 12px rgba(255,215,0,0.13);
+  transition: background 0.2s, color 0.2s;
+  margin-top: 8px;
+}
+
+.form-orcamento button:hover {
+  background: var(--amarelo-escuro);
+  color: var(--branco);
+}
+
+footer {
+  text-align: center;
+  padding: 1.2rem 0;
+  background: var(--preto2);
+  color: var(--amarelo);
+  font-size: 1rem;
+  letter-spacing: 1px;
+  margin-top: 3rem;
+  border-top: 1px solid var(--amarelo-escuro);
+}
+
+/* Responsivo */
+@media (max-width: 1000px) {
+  .banner-content h1 { font-size: 2rem; }
+  .section { padding: 2rem 2vw 1.5rem 2vw; }
+  .valores-list, .servicos-list { gap: 1.3rem; }
+}
+
+@media (max-width: 700px) {
+  .navbar {
+    flex-direction: column;
+    gap: 10px;
+    padding: 1rem 2vw;
+  }
+  .nav-links {
+    flex-direction: column;
+    gap: 0.8rem;
+  }
+  .section {
+    padding: 1.2rem 1vw;
+  }
+  .banner-content h1 { font-size: 1.2rem; }
+}
+
+@media (max-width: 480px) {
+  .logo-img { height: 33px;}
+  .banner-content h1 { font-size: 1.04rem; }
+}
