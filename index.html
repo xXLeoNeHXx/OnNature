@@ -3,9 +3,112 @@
 <head>
   <meta charset="UTF-8">
   <title>On Nature - Consultoria Ambiental</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Bem-vindo à On Nature</h1>
-  <!-- Resto do seu conteúdo -->
+  <header>
+    <nav class="navbar">
+      <div class="logo-area">
+        <img src="assets/logo.png" alt="On Nature Logotipo" class="logo-img" />
+        <span class="logo-text">Nature</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#quem-somos">Quem somos</a></li>
+        <li><a href="#valores">Nossos valores</a></li>
+        <li><a href="#servicos">Serviços</a></li>
+        <li><a href="#orcamento" class="btn-orcamento">Solicitar orçamento</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Banner / Hero -->
+  <section class="banner">
+    <div class="banner-content">
+      <h1>Consultoria Ambiental de Excelência</h1>
+      <p>Transforme seu compromisso ambiental em resultados. Soluções inteligentes e personalizadas para sua empresa.</p>
+      <a href="#orcamento" class="cta-btn">Solicitar orçamento</a>
+    </div>
+  </section>
+
+  <main>
+    <section id="quem-somos" class="section">
+      <h2>Quem somos</h2>
+      <p>
+        A On Nature é uma consultoria ambiental dedicada a oferecer soluções sustentáveis, inovadoras e personalizadas para empresas comprometidas com o meio ambiente. Nosso time une experiência, ética e paixão pela natureza, buscando sempre o melhor para o seu negócio e para o planeta.
+      </p>
+    </section>
+
+    <section id="valores" class="section">
+      <h2>Nossos valores</h2>
+      <div class="valores-list">
+        <div class="valor-card">
+          <span class="valor-icone">🌱</span>
+          <p>Ética e responsabilidade socioambiental</p>
+        </div>
+        <div class="valor-card">
+          <span class="valor-icone">♻️</span>
+          <p>Compromisso com a sustentabilidade</p>
+        </div>
+        <div class="valor-card">
+          <span class="valor-icone">💡</span>
+          <p>Inovação e excelência</p>
+        </div>
+        <div class="valor-card">
+          <span class="valor-icone">🤝</span>
+          <p>Transparência e confiança</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="servicos" class="section">
+      <h2>Serviços</h2>
+      <div class="servicos-list">
+        <div class="servico-card">
+          <span class="servico-icone">📄</span>
+          <h3>Licenciamento ambiental</h3>
+          <p>Assessoria completa para obtenção e regularização de licenças ambientais.</p>
+        </div>
+        <div class="servico-card">
+          <span class="servico-icone">🗑️</span>
+          <h3>Gestão de resíduos</h3>
+          <p>Planos e estratégias inteligentes para o gerenciamento sustentável de resíduos.</p>
+        </div>
+        <div class="servico-card">
+          <span class="servico-icone">📚</span>
+          <h3>Educação ambiental</h3>
+          <p>Palestras, treinamentos e campanhas educativas para empresas e comunidades.</p>
+        </div>
+        <div class="servico-card">
+          <span class="servico-icone">🌍</span>
+          <h3>Sustentabilidade empresarial</h3>
+          <p>Consultoria para tornar o seu negócio mais sustentável e competitivo.</p>
+        </div>
+        <div class="servico-card">
+          <span class="servico-icone">🌳</span>
+          <h3>Planos de manejo e recuperação</h3>
+          <p>Projetos para recuperação ambiental e manejo sustentável de áreas degradadas.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="orcamento" class="section">
+      <h2>Solicitar orçamento</h2>
+      <form class="form-orcamento">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required>
+        <label for="email">E-mail:</label>
+        <input type="email" id="email" name="email" required>
+        <label for="mensagem">Mensagem:</label>
+        <textarea id="mensagem" name="mensagem" rows="4" required></textarea>
+        <button type="submit">Enviar</button>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 On Nature. Todos os direitos reservados.</p>
+  </footer>
+  <script src="script.js"></script>
 </body>
 </html>
