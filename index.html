@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<!-- --> <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <title>On Nature - Consultoria Ambiental</title>
@@ -10,14 +10,15 @@
   <header>
     <nav class="navbar">
       <div class="logo-area">
-        <img src="https://raw.githubusercontent.com/xXLeoNeHXx/OnNature/main/logo.png" alt="Logo do site" width="60">
+        <img src="assets/logo.png" alt="On Nature Logotipo" class="logo-img" />
         <span class="logo-text">Nature</span>
       </div>
       <ul class="nav-links">
         <li><a href="#quem-somos">Quem somos</a></li>
         <li><a href="#valores">Nossos valores</a></li>
         <li><a href="#servicos">Serviços</a></li>
-        <li><a href="#orcamento" class="btn-orcamento">Solicitar orçamento</a></li>
+        <li><a href="#noticias">Notícias</a></li>
+        <!-- <li><a href="#orcamento" class="btn-orcamento">Solicitar orçamento</a></li> -->
       </ul>
     </nav>
   </header>
@@ -94,7 +95,7 @@
 
     <section id="orcamento" class="section">
       <h2>Solicitar orçamento</h2>
-      <form class="form-orcamento">
+      <form class="form-orcamento" action="https://formsubmit.co/leonardo.adao90@gmail.com" method="POST">
         <label for="nome">Nome:</label>
         <input type="text" id="nome" name="nome" required>
         <label for="email">E-mail:</label>
@@ -102,6 +103,9 @@
         <label for="mensagem">Mensagem:</label>
         <textarea id="mensagem" name="mensagem" rows="4" required></textarea>
         <button type="submit">Enviar</button>
+        <!--<input type="hidden" name="_captcha" value="false">-->
+        <input type="hidden" name="_next" value="www.onnature.com.br">
+        
       </form>
     </section>
   </main>
@@ -109,6 +113,40 @@
   <footer>
     <p>&copy; 2025 On Nature. Todos os direitos reservados.</p>
   </footer>
+  
   <script src="script.js"></script>
+ 
+  <!-- Conteúdo da página -->
+
+  <button id="btn-topo" title="Voltar ao topo">↑</button>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const btnTopo = document.getElementById("btn-topo");
+      if (btnTopo) {
+        window.addEventListener('scroll', () => {
+          btnTopo.style.display = window.scrollY > 100 ? "block" : "none";
+        });
+
+        btnTopo.addEventListener('click', () => {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+    });
+
+</script>
+
+<a href="https://wa.me/5511941848586" 
+   class="whatsapp-float" 
+   target="_blank" 
+   title="Fale conosco no WhatsApp" 
+   aria-label="WhatsApp">
+  <img src="assets/whatsapp-social-media-svgrepo-com.svg" alt="WhatsApp" width="40" height="40" />
+</a>
+
+
+
+
+
 </body>
 </html>
