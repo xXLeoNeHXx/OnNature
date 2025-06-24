@@ -86,5 +86,57 @@ form.addEventListener('submit', function(event) {
     });
 });
 
+// topo.js
+document.addEventListener('DOMContentLoaded', () => {
+const btnTopo = document.getElementById("btnTopo");
+
+window.addEventListener("scroll", () => {
+  const scrollY = window.scrollY || window.pageYOffset;
+  const alturaTotal = document.documentElement.scrollHeight;
+  const alturaJanela = window.innerHeight;
+
+  if (scrollY + alturaJanela >= alturaTotal * 0.8) {
+    btnTopo.classList.add("show");
+  } else {
+    btnTopo.classList.remove("show");
+  }
+});
 
 
+  btnTopo.addEventListener('click', () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  });
+  });
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const images = document.querySelectorAll(".hero-img");
+    const prevBtn = document.querySelector(".hero-nav.prev");
+    const nextBtn = document.querySelector(".hero-nav.next");
+    let current = 0;
+
+    function showImage(index) {
+      images.forEach((img, i) => {
+        img.classList.toggle("active", i === index);
+      });
+    }
+
+    prevBtn.addEventListener("click", () => {
+      current = (current - 1 + images.length) % images.length;
+      showImage(current);
+    });
+
+    nextBtn.addEventListener("click", () => {
+      current = (current + 1) % images.length;
+      showImage(current);
+    });
+
+    // Inicial
+    showImage(current);
+  });
+
+  function startAutoSlide() {
+  interval = setInterval(nextImage, 5000); // 3000 ms = 3 segundos
+}
