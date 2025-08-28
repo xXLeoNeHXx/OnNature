@@ -1,281 +1,119 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>On Nature - Consultoria Ambiental</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="icon" href="assets/logo.png" type="image/png" />
-  <link rel="stylesheet" href="style.css" />
-
-   </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    /* Remove sublinhado do botão "Solicite um Orçamento" */
+    .nav-links .cta-btn {
+      text-decoration: none;
+    }
+    .nav-links .cta-btn::after {
+      content: none;
+    }
+  </style>
 </head>
 <body>
   <!-- Cabeçalho -->
-  <header id="header">
+  <header>
     <nav class="navbar">
-      <div class="logo-container">
- <a href="https://www.onnature.com.br">
-  <img src="assets/logo.png" alt="Logo" class="logo-image">
-</a>
-  <span class="logo-text">Nature</span>
-</div>
-
+      <div class="logo-area">
+        <img src="assets/logo.png" alt="On Nature Logotipo" class="logo-img" />
+        <span class="logo-text">Nature</span>
+      </div>
       <ul class="nav-links">
         <li><a href="#quem-somos">Quem somos</a></li>
         <li><a href="#valores">Nossos valores</a></li>
         <li><a href="#servicos">Serviços</a></li>
         <li><a href="#noticias">Notícias</a></li>
-        <li><a href="#orcamento" class="btn-orcamento">Solicitar orçamento</a></li>
+        <li><a href="#orcamento" class="cta-btn">Solicite um Orçamento</a>
+</li>
       </ul>
-<div class="search-box">
-  <input type="text" id="searchInput" placeholder="Pesquisar no site..."/>
-</div>
-
-<script>
-let matches = [];
-let currentMatchIndex = -1;
-
-document.getElementById("searchInput").addEventListener("keydown", function (event) {
-  if (event.key === "Enter") {
-    event.preventDefault();
-    const term = this.value.trim().toLowerCase();
-
-    if (!term) return clearHighlights();
-
-    // Se for nova busca, encontrar todas as ocorrências
-    if (matches.length === 0 || currentSearch !== term) {
-      clearHighlights();
-      matches = [];
-      currentMatchIndex = -1;
-      currentSearch = term;
-      findMatches(term);
-    }
-
-    // Avançar para o próximo
-    currentMatchIndex = (currentMatchIndex + 1) % matches.length;
-    scrollToMatch(currentMatchIndex);
-  }
-});
-
-function findMatches(term) {
-  const container = document.querySelector("main");
-  const textNodes = getTextNodes(container);
-
-  textNodes.forEach(node => {
-    const text = node.nodeValue;
-    const regex = new RegExp(term, "gi");
-    let match;
-    let lastIndex = 0;
-    let parent = node.parentNode;
-
-    if (regex.test(text)) {
-      const span = document.createElement("span");
-      span.innerHTML = text.replace(regex, m => `<mark>${m}</mark>`);
-      parent.replaceChild(span, node);
-    }
-  });
-
-  // Atualiza lista de marcas
-  matches = Array.from(document.querySelectorAll("mark"));
-}
-
-function scrollToMatch(index) {
-  matches.forEach((mark, i) => {
-    mark.style.backgroundColor = i === index ? "#ffeb3b" : "#1abc9c";
-    mark.style.color = i === index ? "#000" : "#000";
-  });
-  matches[index].scrollIntoView({ behavior: "smooth", block: "center" });
-}
-
-function clearHighlights() {
-  const allMarks = document.querySelectorAll("mark");
-  allMarks.forEach(mark => {
-    const text = document.createTextNode(mark.textContent);
-    mark.parentNode.replaceChild(text, mark);
-    mark.parentNode.normalize();
-  });
-  matches = [];
-  currentMatchIndex = -1;
-  currentSearch = "";
-}
-
-function getTextNodes(element) {
-  let nodes = [];
-  for (let node of element.childNodes) {
-    if (node.nodeType === 3 && node.nodeValue.trim()) {
-      nodes.push(node);
-    } else if (node.nodeType === 1 && node.nodeName !== "SCRIPT" && node.nodeName !== "STYLE") {
-      nodes = nodes.concat(getTextNodes(node));
-    }
-  }
-  return nodes;
-}
-
-let currentSearch = "";
-</script>
-
     </nav>
   </header>
 
-  <!-- Conteúdo Principal -->
-  <main>
-    <!-- Slider Hero -->
-    <section class="hero">
-      <div class="hero-slider">
-        <img src="assets/img4.jpg" alt="Imagem 1" class="hero-img active" />
-        <img src="assets/img5.jpg" alt="Imagem 2" class="hero-img" />
-        <img src="assets/img6.jpg" alt="Imagem 3" class="hero-img" />
-        <button class="hero-nav prev">&#10094;</button>
-        <button class="hero-nav next">&#10095;</button>
-      </div>
-      <!--<h1 class="logo-text">BLOGGER <span>DESIGN</span></h1>!-->
-    </section>
+  <!-- Slider / Hero -->
+  <section class="hero">
+    <div class="hero-slider">
+      <img src="assets/img1.jpg" alt="Banner 1" class="hero-img active">
+      <img src="assets/img2.jpg" alt="Banner 2" class="hero-img">
+      <img src="assets/img3.jpg" alt="Banner 3" class="hero-img">
+      <img src="assets/img4.jpg" alt="Banner 4" class="hero-img">
+      <img src="assets/img5.jpg" alt="Banner 5" class="hero-img">
+      <img src="assets/img6.jpg" alt="Banner 6" class="hero-img">
+      <button class="hero-nav prev">&#10094;</button>
+      <button class="hero-nav next">&#10095;</button>
+    </div>
+  </section>
 
-<!-- Texto e Galeria -->
-<section class="content">
-  <div class="text-area">
-    <h2>Sobre a On Nature</h2>
-    <p>
-      A On Nature oferece consultoria ambiental especializada, focada em apoiar empresas a incorporarem práticas sustentáveis e a atenderem rigorosamente às normas ambientais vigentes.
-    </p>
-    <p>
-      Nossa assessoria atua de forma personalizada, identificando riscos ambientais, promovendo a gestão eficiente de recursos naturais e garantindo a conformidade legal dos processos produtivos.
-    </p>
-    <p>
-      Ao contar com a nossa consultoria, sua empresa ganha mais do que um simples suporte técnico: conquista maior eficiência operacional, redução de custos com desperdícios e passivos ambientais, além de fortalecer a imagem institucional perante clientes, investidores e órgãos reguladores.
-    </p>
-    <p>
-      Além dos benefícios empresariais, a On Nature atua comprometida com a preservação do meio ambiente, promovendo práticas que minimizam impactos, incentivam a economia circular e contribuem para a conservação da biodiversidade.
-    </p>
-    <p>
-      Conte com a On Nature para transformar desafios ambientais em oportunidades de inovação e crescimento sustentável. Juntos, podemos fazer a diferença para o seu negócio e para o planeta.
-    </p>
+  <!-- Modal para ampliar imagem -->
+  <div id="modal-image" class="modal-image">
+    <span id="close-modal">&times;</span>
+    <img id="modal-img" src="" alt="Imagem ampliada">
   </div>
 
-  <!-- Galeria lado a lado -->
-<div class="grid-gallery">
-  <div class="quote">CONFIRA O DEPOIMENTO DE NOSSOS CLIENTES</div>
-  <img src="assets/img1.jpg" alt="Paisagem 1" />
-  <img src="assets/img2.jpg" alt="Paisagem 2" />
-  <img src="assets/img3.jpg" alt="Paisagem 3" />
- 
-</div>
+  <main>
+    <section id="quem-somos" class="section">
+      <h2>Quem somos</h2>
+      <p>
+        Somos a On Nature, uma consultoria especializada em regularização ambiental que transforma obrigações legais em oportunidades de inovação e sustentabilidade. Atuamos junto a IBAMA, CETESB e Prefeituras, garantindo a conformidade de nossos clientes e oferecendo estratégias ambientais inteligentes que reduzem impactos, aumentam a eficiência operacional e fortalecem a imagem corporativa. Nosso compromisso é tornar a sustentabilidade um valor tangível e estratégico para os negócios que atendemos.
+      </p>
+    </section>
 
-</section>
+    <section id="valores" class="section">
+      <h2>Nossos valores</h2>
+      <div class="valores-list">
+        <div class="valor-card"><span class="valor-icone">🌱</span><p>Ética e responsabilidade socioambiental</p></div>
+        <div class="valor-card"><span class="valor-icone">♻️</span><p>Compromisso com a sustentabilidade</p></div>
+        <div class="valor-card"><span class="valor-icone">💡</span><p>Inovação e excelência</p></div>
+        <div class="valor-card"><span class="valor-icone">🤝</span><p>Transparência e confiança</p></div>
+      </div>
+    </section>
 
+    <section id="servicos" class="section">
+      <h2>Serviços</h2>
+      <div class="servicos-list">
+        <div class="servico-card"><span class="servico-icone">📄</span><h3>Licenciamento ambiental</h3><p>Assessoria completa para obtenção e regularização de licenças ambientais.</p></div>
+        <div class="servico-card"><span class="servico-icone">🗑️</span><h3>Gestão de resíduos</h3><p>Planos e estratégias inteligentes para o gerenciamento sustentável de resíduos.</p></div>
+        <div class="servico-card"><span class="servico-icone">📚</span><h3>Educação ambiental</h3><p>Palestras, treinamentos e campanhas educativas para empresas e comunidades.</p></div>
+        <div class="servico-card"><span class="servico-icone">🌍</span><h3>Sustentabilidade empresarial</h3><p>Consultoria para tornar o seu negócio mais sustentável e competitivo.</p></div>
+        <div class="servico-card"><span class="servico-icone">🌳</span><h3>Planos de manejo e recuperação</h3><p>Projetos para recuperação ambiental e manejo sustentável de áreas degradadas.</p></div>
+      </div>
+    </section>
+
+    <section id="orcamento" class="section">
+      <h2>Solicitar orçamento</h2>
+      <form class="form-orcamento" action="https://formsubmit.co/leonardo.adao90@gmail.com" method="POST">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required>
+        <label for="email">E-mail:</label>
+        <input type="email" id="email" name="email" required>
+        <label for="mensagem">Mensagem:</label>
+        <textarea id="mensagem" name="mensagem" rows="4" required></textarea>
+        <button type="submit">Enviar</button>
+        <input type="hidden" name="_next" value="www.onnature.com.br">
+      </form>
+    </section>
   </main>
 
-  <!-- Rodapé -->
   <footer>
- <!----   <div class="newsletter">
-      <p>JOIN OUR NEWSLETTER</p>
-      <input type="email" placeholder="Enter your email" />
-      <button>Subscribe Now</button>
-    </div>
-    <div class="footer-links">
-      <div><p>HOME<br />GALLERY<br />PAGES<br />BLOG</p></div>
-      <div><p>ABOUT<br />CONTACT</p></div>
-      <div><p>FACEBOOK<br />TWITTER<br />PINTEREST</p></div>
-    </div>-->
-
     <p>&copy; 2025 On Nature. Todos os direitos reservados.</p>
-
   </footer>
 
- 
-<!-- -------------------------- -->
-<!-- ÍCONE WHATSAPP COM MENSAGEM -->
-<!-- -------------------------- -->
-<a href="https://wa.me/5511941848586" 
-   class="whatsapp-wrapper" 
-   target="_blank" 
-   title="Fale conosco no WhatsApp" 
-   aria-label="WhatsApp">
-  
-  <img src="assets/whatsapp-social-media-svgrepo-com.svg" alt="WhatsApp" class="whatsapp-icon" />
-  <div class="whatsapp-message">Entre em contato conosco</div>
-</a>
+  <!-- Botão voltar ao topo -->
+  <button id="btn-topo" title="Voltar ao topo">↑</button>
 
-  <!-- Botão Voltar ao Topo -->
-  <button id="btnTopo" title="Voltar ao topo">↑</button>
+  <!-- WhatsApp flutuante -->
+  <a href="https://wa.me/5511941848586" 
+     class="btn-whatsapp" 
+     target="_blank" 
+     title="Fale conosco no WhatsApp" 
+     aria-label="WhatsApp">
+    <img src="assets/whatsapp-social-media-svgrepo-com.svg" alt="WhatsApp">
+  </a>
 
-  <!-- Scripts -->
-  <script>
-    // Esconde a navbar ao rolar
-    document.addEventListener("DOMContentLoaded", () => {
-      const header = document.getElementById("header");
-      let lastScroll = 0;
-
-      window.addEventListener("scroll", () => {
-        const currentScroll = window.pageYOffset;
-        header.classList.toggle("nav-hide", currentScroll > lastScroll && currentScroll > 100);
-        lastScroll = currentScroll;
-      });
-    });
-
-    // Botão voltar ao topo
-    document.addEventListener("DOMContentLoaded", () => {
-      const btnTopo = document.getElementById("btnTopo");
-
-      window.addEventListener("scroll", () => {
-        const scrollY = window.scrollY || window.pageYOffset;
-        const alturaTotal = document.documentElement.scrollHeight;
-        const alturaJanela = window.innerHeight;
-
-        btnTopo.classList.toggle("show", scrollY + alturaJanela >= alturaTotal * 0.8);
-      });
-
-      btnTopo.addEventListener("click", () => {
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      });
-    });
-
-    // Slider Hero com auto slide a cada 3 segundos
-    document.addEventListener("DOMContentLoaded", () => {
-      const images = document.querySelectorAll(".hero-img");
-      const prevBtn = document.querySelector(".hero-nav.prev");
-      const nextBtn = document.querySelector(".hero-nav.next");
-      let current = 0;
-      let interval;
-
-      function showImage(index) {
-        images.forEach((img, i) => {
-          img.classList.toggle("active", i === index);
-        });
-      }
-
-      function nextImage() {
-        current = (current + 1) % images.length;
-        showImage(current);
-      }
-
-      function prevImage() {
-        current = (current - 1 + images.length) % images.length;
-        showImage(current);
-      }
-
-      function startAutoSlide() {
-        interval = setInterval(nextImage, 3000);
-      }
-
-      function resetInterval() {
-        clearInterval(interval);
-        startAutoSlide();
-      }
-
-      nextBtn.addEventListener("click", () => {
-        nextImage();
-        resetInterval();
-      });
-
-      prevBtn.addEventListener("click", () => {
-        prevImage();
-        resetInterval();
-      });
-
-      showImage(current);
-      startAutoSlide();
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
