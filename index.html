@@ -6,19 +6,48 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link rel="icon" href="assets/logo.png" type="image/png" />
   <link rel="stylesheet" href="style.css" />
+  <style>
+    /* Ajustes do campo de busca */
+    .search-box {
+      position: relative;
+      display: inline-block;
+    }
 
-   </style>
+    .search-box input {
+      padding: 8px 35px 8px 10px;
+      border: 1px solid #ccc;
+      border-radius: 20px;
+      outline: none;
+    }
+
+    .search-box::after {
+      content: "🔍";
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: #555;
+    }
+
+    mark {
+      background-color: #1abc9c;
+      color: #000;
+      padding: 0 2px;
+      border-radius: 3px;
+    }
+  </style>
 </head>
 <body>
   <!-- Cabeçalho -->
   <header id="header">
     <nav class="navbar">
       <div class="logo-container">
- <a href="https://www.onnature.com.br">
-  <img src="assets/logo.png" alt="Logo" class="logo-image">
-</a>
-  <span class="logo-text">Nature</span>
-</div>
+        <a href="https://www.onnature.com.br">
+          <img src="assets/logo.png" alt="Logo" class="logo-image">
+        </a>
+        <span class="logo-text">Nature</span>
+      </div>
 
       <ul class="nav-links">
         <li><a href="#quem-somos">Quem somos</a></li>
@@ -27,93 +56,11 @@
         <li><a href="#noticias">Notícias</a></li>
         <li><a href="#orcamento" class="btn-orcamento">Solicitar orçamento</a></li>
       </ul>
-<div class="search-box">
-  <input type="text" id="searchInput" placeholder="Pesquisar no site..."/>
-</div>
 
-<script>
-let matches = [];
-let currentMatchIndex = -1;
-
-document.getElementById("searchInput").addEventListener("keydown", function (event) {
-  if (event.key === "Enter") {
-    event.preventDefault();
-    const term = this.value.trim().toLowerCase();
-
-    if (!term) return clearHighlights();
-
-    // Se for nova busca, encontrar todas as ocorrências
-    if (matches.length === 0 || currentSearch !== term) {
-      clearHighlights();
-      matches = [];
-      currentMatchIndex = -1;
-      currentSearch = term;
-      findMatches(term);
-    }
-
-    // Avançar para o próximo
-    currentMatchIndex = (currentMatchIndex + 1) % matches.length;
-    scrollToMatch(currentMatchIndex);
-  }
-});
-
-function findMatches(term) {
-  const container = document.querySelector("main");
-  const textNodes = getTextNodes(container);
-
-  textNodes.forEach(node => {
-    const text = node.nodeValue;
-    const regex = new RegExp(term, "gi");
-    let match;
-    let lastIndex = 0;
-    let parent = node.parentNode;
-
-    if (regex.test(text)) {
-      const span = document.createElement("span");
-      span.innerHTML = text.replace(regex, m => `<mark>${m}</mark>`);
-      parent.replaceChild(span, node);
-    }
-  });
-
-  // Atualiza lista de marcas
-  matches = Array.from(document.querySelectorAll("mark"));
-}
-
-function scrollToMatch(index) {
-  matches.forEach((mark, i) => {
-    mark.style.backgroundColor = i === index ? "#ffeb3b" : "#1abc9c";
-    mark.style.color = i === index ? "#000" : "#000";
-  });
-  matches[index].scrollIntoView({ behavior: "smooth", block: "center" });
-}
-
-function clearHighlights() {
-  const allMarks = document.querySelectorAll("mark");
-  allMarks.forEach(mark => {
-    const text = document.createTextNode(mark.textContent);
-    mark.parentNode.replaceChild(text, mark);
-    mark.parentNode.normalize();
-  });
-  matches = [];
-  currentMatchIndex = -1;
-  currentSearch = "";
-}
-
-function getTextNodes(element) {
-  let nodes = [];
-  for (let node of element.childNodes) {
-    if (node.nodeType === 3 && node.nodeValue.trim()) {
-      nodes.push(node);
-    } else if (node.nodeType === 1 && node.nodeName !== "SCRIPT" && node.nodeName !== "STYLE") {
-      nodes = nodes.concat(getTextNodes(node));
-    }
-  }
-  return nodes;
-}
-
-let currentSearch = "";
-</script>
-
+      <!-- Caixa de busca -->
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Pesquisar no site..." />
+      </div>
     </nav>
   </header>
 
@@ -128,92 +75,123 @@ let currentSearch = "";
         <button class="hero-nav prev">&#10094;</button>
         <button class="hero-nav next">&#10095;</button>
       </div>
-      <!--<h1 class="logo-text">BLOGGER <span>DESIGN</span></h1>!-->
     </section>
 
-<!-- Texto e Galeria -->
-<section class="content">
-  <div class="text-area">
-    <h2>Sobre a On Nature</h2>
-    <p>
-      A On Nature oferece consultoria ambiental especializada, focada em apoiar empresas a incorporarem práticas sustentáveis e a atenderem rigorosamente às normas ambientais vigentes.
-    </p>
-    <p>
-      Nossa assessoria atua de forma personalizada, identificando riscos ambientais, promovendo a gestão eficiente de recursos naturais e garantindo a conformidade legal dos processos produtivos.
-    </p>
-    <p>
-      Ao contar com a nossa consultoria, sua empresa ganha mais do que um simples suporte técnico: conquista maior eficiência operacional, redução de custos com desperdícios e passivos ambientais, além de fortalecer a imagem institucional perante clientes, investidores e órgãos reguladores.
-    </p>
-    <p>
-      Além dos benefícios empresariais, a On Nature atua comprometida com a preservação do meio ambiente, promovendo práticas que minimizam impactos, incentivam a economia circular e contribuem para a conservação da biodiversidade.
-    </p>
-    <p>
-      Conte com a On Nature para transformar desafios ambientais em oportunidades de inovação e crescimento sustentável. Juntos, podemos fazer a diferença para o seu negócio e para o planeta.
-    </p>
-  </div>
+    <!-- Texto e Galeria -->
+    <section class="content">
+      <div class="text-area">
+        <h2>Sobre a On Nature</h2>
+        <p>A On Nature oferece consultoria ambiental especializada, focada em apoiar empresas a incorporarem práticas sustentáveis e a atenderem rigorosamente às normas ambientais vigentes.</p>
+        <p>Nossa assessoria atua de forma personalizada, identificando riscos ambientais, promovendo a gestão eficiente de recursos naturais e garantindo a conformidade legal dos processos produtivos.</p>
+        <p>Ao contar com a nossa consultoria, sua empresa ganha mais do que um simples suporte técnico: conquista maior eficiência operacional, redução de custos com desperdícios e passivos ambientais, além de fortalecer a imagem institucional perante clientes, investidores e órgãos reguladores.</p>
+        <p>Além dos benefícios empresariais, a On Nature atua comprometida com a preservação do meio ambiente, promovendo práticas que minimizam impactos, incentivam a economia circular e contribuem para a conservação da biodiversidade.</p>
+        <p>Conte com a On Nature para transformar desafios ambientais em oportunidades de inovação e crescimento sustentável. Juntos, podemos fazer a diferença para o seu negócio e para o planeta.</p>
+      </div>
 
-  <!-- Galeria lado a lado -->
-<div class="grid-gallery">
-  <div class="quote">CONFIRA O DEPOIMENTO DE NOSSOS CLIENTES</div>
-  <img src="assets/img1.jpg" alt="Paisagem 1" />
-  <img src="assets/img2.jpg" alt="Paisagem 2" />
-  <img src="assets/img3.jpg" alt="Paisagem 3" />
- 
-</div>
-
-</section>
-
+      <!-- Galeria lado a lado -->
+      <div class="grid-gallery">
+        <div class="quote">CONFIRA O DEPOIMENTO DE NOSSOS CLIENTES</div>
+        <img src="assets/img1.jpg" alt="Paisagem 1" />
+        <img src="assets/img2.jpg" alt="Paisagem 2" />
+        <img src="assets/img3.jpg" alt="Paisagem 3" />
+      </div>
+    </section>
   </main>
 
   <!-- Rodapé -->
   <footer>
- <!----   <div class="newsletter">
-      <p>JOIN OUR NEWSLETTER</p>
-      <input type="email" placeholder="Enter your email" />
-      <button>Subscribe Now</button>
-    </div>
-    <div class="footer-links">
-      <div><p>HOME<br />GALLERY<br />PAGES<br />BLOG</p></div>
-      <div><p>ABOUT<br />CONTACT</p></div>
-      <div><p>FACEBOOK<br />TWITTER<br />PINTEREST</p></div>
-    </div>-->
-
     <p>&copy; 2025 On Nature. Todos os direitos reservados.</p>
-
   </footer>
 
- 
-<!-- -------------------------- -->
-<!-- ÍCONE WHATSAPP COM MENSAGEM -->
-<!-- -------------------------- -->
-<a href="https://wa.me/5511941848586" 
-   class="whatsapp-wrapper" 
-   target="_blank" 
-   title="Fale conosco no WhatsApp" 
-   aria-label="WhatsApp">
-  
-  <img src="assets/whatsapp-social-media-svgrepo-com.svg" alt="WhatsApp" class="whatsapp-icon" />
-  <div class="whatsapp-message">Entre em contato conosco</div>
-</a>
+  <!-- Ícone WhatsApp -->
+  <a href="https://wa.me/5511941848586" class="whatsapp-wrapper" target="_blank" title="Fale conosco no WhatsApp" aria-label="WhatsApp">
+    <img src="assets/whatsapp-social-media-svgrepo-com.svg" alt="WhatsApp" class="whatsapp-icon" />
+    <div class="whatsapp-message">Entre em contato conosco</div>
+  </a>
 
   <!-- Botão Voltar ao Topo -->
   <button id="btnTopo" title="Voltar ao topo">↑</button>
 
   <!-- Scripts -->
   <script>
-    // Esconde a navbar ao rolar
-    document.addEventListener("DOMContentLoaded", () => {
-      const header = document.getElementById("header");
-      let lastScroll = 0;
+    /* ========================
+       FUNÇÃO DE BUSCA INTERNA
+    =========================*/
+    let matches = [];
+    let currentMatchIndex = -1;
+    let currentSearch = "";
 
-      window.addEventListener("scroll", () => {
-        const currentScroll = window.pageYOffset;
-        header.classList.toggle("nav-hide", currentScroll > lastScroll && currentScroll > 100);
-        lastScroll = currentScroll;
-      });
+    document.getElementById("searchInput").addEventListener("keydown", function (event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        const term = this.value.trim().toLowerCase();
+        if (!term) return clearHighlights();
+
+        if (matches.length === 0 || currentSearch !== term) {
+          clearHighlights();
+          matches = [];
+          currentMatchIndex = -1;
+          currentSearch = term;
+          findMatches(term);
+        }
+
+        if (matches.length > 0) {
+          currentMatchIndex = (currentMatchIndex + 1) % matches.length;
+          scrollToMatch(currentMatchIndex);
+        }
+      }
     });
 
-    // Botão voltar ao topo
+    function findMatches(term) {
+      const container = document.querySelector("main");
+      const textNodes = getTextNodes(container);
+
+      textNodes.forEach(node => {
+        const text = node.nodeValue;
+        const regex = new RegExp(term, "gi");
+        if (regex.test(text)) {
+          const span = document.createElement("span");
+          span.innerHTML = text.replace(regex, m => `<mark>${m}</mark>`);
+          node.parentNode.replaceChild(span, node);
+        }
+      });
+
+      matches = Array.from(document.querySelectorAll("mark"));
+    }
+
+    function scrollToMatch(index) {
+      matches.forEach((mark, i) => {
+        mark.style.backgroundColor = i === index ? "#ffeb3b" : "#1abc9c";
+      });
+      matches[index].scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+
+    function clearHighlights() {
+      document.querySelectorAll("mark").forEach(mark => {
+        const text = document.createTextNode(mark.textContent);
+        mark.parentNode.replaceChild(text, mark);
+        mark.parentNode.normalize();
+      });
+      matches = [];
+      currentMatchIndex = -1;
+      currentSearch = "";
+    }
+
+    function getTextNodes(element) {
+      let nodes = [];
+      for (let node of element.childNodes) {
+        if (node.nodeType === 3 && node.nodeValue.trim()) {
+          nodes.push(node);
+        } else if (node.nodeType === 1 && !["SCRIPT", "STYLE"].includes(node.nodeName)) {
+          nodes = nodes.concat(getTextNodes(node));
+        }
+      }
+      return nodes;
+    }
+
+    /* ========================
+       BOTÃO VOLTAR AO TOPO
+    =========================*/
     document.addEventListener("DOMContentLoaded", () => {
       const btnTopo = document.getElementById("btnTopo");
 
@@ -221,7 +199,6 @@ let currentSearch = "";
         const scrollY = window.scrollY || window.pageYOffset;
         const alturaTotal = document.documentElement.scrollHeight;
         const alturaJanela = window.innerHeight;
-
         btnTopo.classList.toggle("show", scrollY + alturaJanela >= alturaTotal * 0.8);
       });
 
@@ -230,7 +207,9 @@ let currentSearch = "";
       });
     });
 
-    // Slider Hero com auto slide a cada 3 segundos
+    /* ========================
+       SLIDER HERO AUTOMÁTICO
+    =========================*/
     document.addEventListener("DOMContentLoaded", () => {
       const images = document.querySelectorAll(".hero-img");
       const prevBtn = document.querySelector(".hero-nav.prev");
@@ -239,9 +218,7 @@ let currentSearch = "";
       let interval;
 
       function showImage(index) {
-        images.forEach((img, i) => {
-          img.classList.toggle("active", i === index);
-        });
+        images.forEach((img, i) => img.classList.toggle("active", i === index));
       }
 
       function nextImage() {
