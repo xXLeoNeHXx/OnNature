@@ -1,10 +1,9 @@
 :root {
-  /* Paleta nova */
-  --fundo-base: #eaeae5;      /* Fundo geral */
-  --header: #3c3c52;          /* Cabeçalho */
-  --texto-header: #ddcfc1;    /* Letras do cabeçalho */
-  --texto: #3c3c52;           /* Texto padrão */
-  --detalhe: #102120;         /* Hover/botões */
+  --fundo-base: #eaeae5;
+  --header: #3c3c52;
+  --texto-header: #ddcfc1;
+  --texto: #3c3c52;
+  --detalhe: #102120;
   --branco: #ffffff;
 }
 
@@ -20,7 +19,7 @@ body {
   min-height: 100vh;
 }
 
-/* Navbar */
+/* ---------------- HEADER / NAVBAR ---------------- */
 header {
   background: var(--header);
   box-shadow: 0 2px 6px rgba(0,0,0,0.25);
@@ -100,12 +99,11 @@ header {
   color: var(--texto-header);
 }
 
-/* Botão CTA "Solicite um Orçamento" */
+/* Botão CTA */
 .nav-links .cta-btn {
-  text-decoration: none;             /* Remove sublinhado */
   background-color: var(--fundo-base);
   color: var(--header);
-  border: 1px solid transparent;     /* Inicialmente sem borda visível */
+  border: 1px solid transparent;
   padding: 1rem 2rem;
   border-radius: 60px;
   font-weight: bold;
@@ -113,33 +111,63 @@ header {
 }
 
 .nav-links .cta-btn:hover {
-  background-color: var(--header);       /* Fundo ao passar o mouse */
-  color: var(--texto-header);            /* Texto ao passar o mouse */
-  border: 1px solid var(--texto-header); /* Borda principal */
-  box-shadow: 0 0 0 1px var(--texto-header); /* Borda extra fina ao redor */
+  background-color: var(--header);
+  color: var(--texto-header);
+  border: 1px solid var(--texto-header);
+  box-shadow: 0 0 0 1px var(--texto-header);
   transform: scale(1.05);
 }
 
+.menu-toggle {
+  display: none;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 30px;
+  height: 22px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1001;
+}
 
-/* Botões padrão */
-.btn-orcamento {
-  background-color: #fff;              
-  color: #28a745;                      
-  border: 2px solid #28a745;           
-  padding: 10px 20px;
-  border-radius: 25px;
-  font-weight: bold;
+.menu-toggle span {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background: var(--texto-header);
+  border-radius: 2px;
   transition: all 0.3s ease;
 }
 
-.btn-orcamento:hover,
-.form-orcamento button:hover {
-  background-color: var(--header);
-  color: var(--fundo-base);
-  transform: scale(1.05);
+.menu-toggle.open span:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
 }
 
-/* Hero Slider com efeito de esmaecer */
+.menu-toggle.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle.open span:nth-child(3) {
+  transform: rotate(-45deg) translate(5px, -5px);
+}
+
+/* Menu aberto no mobile */
+.nav-links.open {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 100%;
+  background: var(--header);
+  padding: 1.5rem 0;
+  max-height: 500px;
+  overflow: hidden;
+}
+
+/* ---------------- HERO ---------------- */
 .hero {
   position: relative;
   width: 100%;
@@ -170,7 +198,6 @@ header {
   z-index: 1;
 }
 
-/* Botões Slider */
 .hero-nav {
   position: absolute;
   top: 50%;
@@ -190,15 +217,10 @@ header {
   background: var(--header);
 }
 
-.hero-nav.prev {
-  left: 15px;
-}
+.hero-nav.prev { left: 15px; }
+.hero-nav.next { right: 15px; }
 
-.hero-nav.next {
-  right: 15px;
-}
-
-/* Modal de imagem */
+/* ---------------- MODAL ---------------- */
 .modal-image {
   display: none;
   position: fixed;
@@ -229,7 +251,7 @@ header {
   cursor: pointer;
 }
 
-/* Seções */
+/* ---------------- SEÇÕES ---------------- */
 .section {
   background: var(--branco);
   margin: 2rem auto;
@@ -253,9 +275,9 @@ header {
 
 /* Valores */
 .valores-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
   justify-content: center;
   margin-top: 1.7rem;
 }
@@ -264,11 +286,9 @@ header {
   background: var(--fundo-base);
   border: 1.5px solid var(--header);
   border-radius: 9px;
-  padding: 1.1rem 2.3rem;
+  padding: 1.1rem;
   text-align: center;
   color: var(--header);
-  min-width: 180px;
-  max-width: 220px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -284,9 +304,9 @@ header {
 
 /* Serviços */
 .servicos-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
   justify-content: center;
   margin-top: 1.7rem;
 }
@@ -295,11 +315,9 @@ header {
   background: var(--fundo-base);
   border: 1.5px solid var(--header);
   border-radius: 9px;
-  padding: 1.2rem 2.3rem;
+  padding: 1.2rem;
   text-align: center;
   color: var(--header);
-  min-width: 220px;
-  max-width: 255px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -340,12 +358,6 @@ header {
   font-size: 1rem;
 }
 
-.form-orcamento input:focus,
-.form-orcamento textarea:focus {
-  border: 1.5px solid var(--header);
-  outline: none;
-}
-
 .form-orcamento button {
   background-color: var(--fundo-base);
   color: var(--header);
@@ -365,7 +377,7 @@ header {
   transform: scale(1.05);
 }
 
-/* Footer */
+/* ---------------- FOOTER ---------------- */
 footer {
   text-align: center;
   padding: 1rem;
@@ -399,7 +411,7 @@ footer {
   transform: scale(1.1);
 }
 
-/* Botão WhatsApp flutuante */
+/* WhatsApp flutuante */
 .btn-whatsapp {
   position: fixed;
   bottom: 95px;
@@ -426,15 +438,31 @@ footer {
   box-shadow: 0px 6px 12px rgba(0,0,0,0.3);
 }
 
-/* Responsividade slider e seções */
+/* ---------------- RESPONSIVIDADE ---------------- */
 @media (max-width: 768px) {
-  .valores-list, .servicos-list {
+  /* Navbar e menu */
+  .nav-links {
+    display: none; /* não aparece por padrão */
     flex-direction: column;
     align-items: center;
+    width: 100%;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: var(--header);
+    padding: 1.5rem 0;
   }
 
-  .hero-nav {
-    font-size: 1.5rem;
-    padding: 0.3rem 0.6rem;
+  .nav-links.open {
+    display: flex;
+  }
+
+  .menu-toggle {
+    display: flex;
+    order: 2; /* garante que fique no canto direito */
+  }
+
+  .hero-img {
+    height: 50vh; /* mobile mais ajustado */
   }
 }
