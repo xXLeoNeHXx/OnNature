@@ -1,4 +1,17 @@
 // -----------------------------
+// Menu hamburguer mobile
+// -----------------------------
+document.addEventListener('DOMContentLoaded', () => {
+  const toggle = document.getElementById('menu-toggle');
+  const navLinks = document.getElementById('nav-links');
+
+  toggle.addEventListener('click', () => {
+    navLinks.classList.toggle('open');
+    toggle.classList.toggle('open');
+  });
+});
+
+// -----------------------------
 // Scroll suave para links do menu e CTA
 // -----------------------------
 document.querySelectorAll('.nav-links a, .cta-btn').forEach(link => {
@@ -8,29 +21,35 @@ document.querySelectorAll('.nav-links a, .cta-btn').forEach(link => {
       e.preventDefault();
       const target = document.querySelector(href);
       if (target) target.scrollIntoView({ behavior: 'smooth' });
+      // fecha o menu mobile após clicar
+      const navLinks = document.getElementById('nav-links');
+      const toggle = document.getElementById('menu-toggle');
+      if(navLinks.classList.contains('open')) {
+        navLinks.classList.remove('open');
+        toggle.classList.remove('open');
+      }
     }
   });
 });
 
 // -----------------------------
-// Botão "Voltar ao topo" após ultrapassar o slider
+// Botão "Voltar ao topo"
 // -----------------------------
 document.addEventListener('DOMContentLoaded', () => {
   const btnTopo = document.getElementById("btn-topo");
-  const heroSection = document.querySelector(".hero"); // seção das imagens
+  const heroSection = document.querySelector(".hero");
 
   if (btnTopo && heroSection) {
-    btnTopo.style.display = "none";           // inicia escondido
-    btnTopo.style.borderRadius = "50%";       // redondo
-    btnTopo.style.width = "50px";             // tamanho
+    btnTopo.style.display = "none";
+    btnTopo.style.borderRadius = "50%";
+    btnTopo.style.width = "50px";
     btnTopo.style.height = "50px";
-    btnTopo.style.fontSize = "1.5rem";        // seta
-    btnTopo.style.padding = "0";              // remove padding extra
+    btnTopo.style.fontSize = "1.5rem";
+    btnTopo.style.padding = "0";
 
     window.addEventListener('scroll', () => {
       const scrollY = window.scrollY;
       const heroBottom = heroSection.offsetTop + heroSection.offsetHeight;
-
       btnTopo.style.display = (scrollY > heroBottom) ? "block" : "none";
     });
 
@@ -41,7 +60,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // -----------------------------
-// Cabeçalho que some ao rolar
+// Cabeçalho que desaparece ao rolar
 // -----------------------------
 document.addEventListener('DOMContentLoaded', () => {
   const header = document.querySelector('header');
@@ -63,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const prevBtn = document.querySelector(".hero-nav.prev");
   const nextBtn = document.querySelector(".hero-nav.next");
   let current = 0;
-  let delay = 5000; // primeira imagem 5s
+  let delay = 5000;
   let interval;
 
   function showImage(index) {
@@ -76,7 +95,7 @@ document.addEventListener("DOMContentLoaded", () => {
     current = (current + 1) % images.length;
     showImage(current);
     clearInterval(interval);
-    interval = setInterval(nextImage, 3000); // depois da primeira, 3s
+    interval = setInterval(nextImage, 3000);
   }
 
   function prevImage() {
