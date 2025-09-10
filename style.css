@@ -108,6 +108,11 @@ header {
   border-radius: 60px;
   font-weight: bold;
   transition: background 0.3s, color 0.3s, transform 0.2s, border 0.3s;
+  text-decoration: none; /* garante sem sublinhado */
+}
+
+.nav-links .cta-btn::after {
+  content: none; /* remove underline animado */
 }
 
 .nav-links .cta-btn:hover {
@@ -116,7 +121,9 @@ header {
   border: 1px solid var(--texto-header);
   box-shadow: 0 0 0 1px var(--texto-header);
   transform: scale(1.05);
+  text-decoration: none; /* remove sublinhado no hover */
 }
+
 
 .menu-toggle {
   display: none;
