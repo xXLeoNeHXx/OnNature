@@ -62,12 +62,25 @@ header {
   text-transform: uppercase;
 }
 
+/* ---------- LINKS ---------- */
 .nav-links {
   list-style: none;
   display: flex;
-  gap: 2rem;
+  align-items: center;
   margin: 0;
   padding: 0;
+  flex: 1;
+  justify-content: space-between;
+}
+
+.links-esquerda {
+  display: flex;
+  gap: 2rem;
+  align-items: center;
+}
+
+.links-direita {
+  margin-left: auto;
 }
 
 /* Links normais */
@@ -123,6 +136,7 @@ header {
   text-decoration: none !important;
 }
 
+/* Botão menu hamburguer */
 .menu-toggle {
   display: none;
   flex-direction: column;
@@ -494,5 +508,19 @@ footer {
 
   .hero-img {
     height: 50vh;
+  }
+
+  .links-esquerda,
+  .links-direita {
+    flex-direction: column;
+    margin: 0;
+    gap: 1.2rem;
+  }
+}
+
+/* Espaçamento extra apenas em telas grandes */
+@media (min-width: 769px) {
+  .links-esquerda {
+    margin-left: 4rem; /* ajuste como preferir */
   }
 }
