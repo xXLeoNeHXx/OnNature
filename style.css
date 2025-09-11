@@ -70,6 +70,7 @@ header {
   padding: 0;
 }
 
+/* Links normais */
 .nav-links a {
   position: relative;
   text-decoration: none;
@@ -79,7 +80,8 @@ header {
   transition: color 0.25s;
 }
 
-.nav-links a::after {
+/* Sublinhado animado apenas nos links normais */
+.nav-links a:not(.cta-btn)::after {
   content: '';
   position: absolute;
   left: 0;
@@ -90,8 +92,8 @@ header {
   transition: width 0.3s ease;
 }
 
-.nav-links a:hover::after,
-.nav-links .active::after {
+.nav-links a:not(.cta-btn):hover::after,
+.nav-links a:not(.cta-btn).active::after {
   width: 100%;
 }
 
@@ -104,15 +106,12 @@ header {
   background-color: var(--texto-header);
   color: var(--header);
   border: 1px solid transparent;
-  padding: 1rem 2rem;
+  padding: 0.8rem 1.8rem;
   border-radius: 60px;
   font-weight: bold;
   transition: background 0.3s, color 0.3s, transform 0.2s, border 0.3s;
-  text-decoration: none; /* garante sem sublinhado */
-}
-
-.nav-links .cta-btn::after {
-  content: none; /* remove underline animado */
+  text-decoration: none !important; /* nunca sublinhar */
+  display: inline-block;
 }
 
 .nav-links .cta-btn:hover {
@@ -121,9 +120,8 @@ header {
   border: 1px solid var(--texto-header);
   box-shadow: 0 0 0 1px var(--texto-header);
   transform: scale(1.05);
-  text-decoration: none; /* remove sublinhado no hover */
+  text-decoration: none !important;
 }
-
 
 .menu-toggle {
   display: none;
@@ -440,7 +438,7 @@ footer {
 .btn-whatsapp::after {
   content: 'Entre em contato';
   position: absolute;
-  bottom: 70px; /* acima do botão */
+  bottom: 70px;
   right: 50%;
   transform: translateX(50%);
   background-color: var(--header);
@@ -471,12 +469,10 @@ footer {
   box-shadow: 0px 6px 12px rgba(0,0,0,0.3);
 }
 
-
 /* ---------------- RESPONSIVIDADE ---------------- */
 @media (max-width: 768px) {
-  /* Navbar e menu */
   .nav-links {
-    display: none; /* não aparece por padrão */
+    display: none;
     flex-direction: column;
     align-items: center;
     width: 100%;
@@ -493,10 +489,10 @@ footer {
 
   .menu-toggle {
     display: flex;
-    order: 2; /* garante que fique no canto direito */
+    order: 2;
   }
 
   .hero-img {
-    height: 50vh; /* mobile mais ajustado */
+    height: 50vh;
   }
 }
