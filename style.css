@@ -1,3 +1,4 @@
+body { outline: 10px solid red !important; }
 /* =========================================================
    On Nature - style.css (REESTRUTURADO / LIMPO / REFINADO)
 ========================================================= */
@@ -1086,5 +1087,6 @@ footer {
   font-weight: 600;
   transition: 0.3s;
 }
+
 
 .modal-close:hover { background: #2b2b40; transform: scale(1.05); }
