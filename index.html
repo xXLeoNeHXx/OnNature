@@ -28,7 +28,7 @@
       referrerpolicy="no-referrer"
     />
   </head>
- 
+
   <body id="topo">
     <!-- =======================================================
       HEADER / NAVBAR
@@ -137,7 +137,7 @@
             <div class="grid-track" data-base-dir="1">
               <div class="grid-item">
                 <img
-                  src="assets/sua_imagem_1.jpg"
+                  src="assets/SUA_IMAGEM_1.jpg"
                   alt="Galeria: imagem 1"
                   loading="lazy"
                   decoding="async"
@@ -145,7 +145,7 @@
               </div>
               <div class="grid-item">
                 <img
-                  src="assets/sua_imagem_2.jpg"
+                  src="assets/SUA_IMAGEM_2.jpg"
                   alt="Galeria: imagem 2"
                   loading="lazy"
                   decoding="async"
@@ -153,7 +153,7 @@
               </div>
               <div class="grid-item">
                 <img
-                  src="assets/sua_imagem_3.jpg"
+                  src="assets/SUA_IMAGEM_3.jpg"
                   alt="Galeria: imagem 3"
                   loading="lazy"
                   decoding="async"
@@ -161,7 +161,7 @@
               </div>
               <div class="grid-item">
                 <img
-                  src="assets/sua_imagem_4.jpg"
+                  src="assets/SUA_IMAGEM_4.jpg"
                   alt="Galeria: imagem 4"
                   loading="lazy"
                   decoding="async"
@@ -174,7 +174,7 @@
             <div class="grid-track" data-base-dir="-1">
               <div class="grid-item">
                 <img
-                  src="assets/sua_imagem_4.jpg"
+                  src="assets/SUA_IMAGEM_4.jpg"
                   alt="Galeria: imagem 5"
                   loading="lazy"
                   decoding="async"
@@ -182,7 +182,7 @@
               </div>
               <div class="grid-item">
                 <img
-                  src="assets/sua_imagem_3.jpg"
+                  src="assets/SUA_IMAGEM_3.jpg"
                   alt="Galeria: imagem 6"
                   loading="lazy"
                   decoding="async"
@@ -190,7 +190,7 @@
               </div>
               <div class="grid-item">
                 <img
-                  src="assets/sua_imagem_2.jpg"
+                  src="assets/SUA_IMAGEM_2.jpg"
                   alt="Galeria: imagem 7"
                   loading="lazy"
                   decoding="async"
@@ -198,7 +198,7 @@
               </div>
               <div class="grid-item">
                 <img
-                  src="assets/sua_imagem_1.jpg"
+                  src="assets/SUA_IMAGEM_1.jpg"
                   alt="Galeria: imagem 8"
                   loading="lazy"
                   decoding="async"
@@ -418,7 +418,23 @@
           </div>
 
           <div class="orcamento-form-box">
-            <form class="contato-form" action="#" method="post">
+            <!-- NETLIFY FORMS: ajustes para envio funcionar -->
+            <form
+              class="contato-form"
+              name="solicitar-orcamento"
+              method="POST"
+              data-netlify="true"
+              data-netlify-honeypot="bot-field"
+              action="/obrigado"
+            >
+              <!-- obrigatório para o Netlify identificar o form -->
+              <input type="hidden" name="form-name" value="solicitar-orcamento" />
+
+              <!-- honeypot anti-spam (não aparece) -->
+              <p style="display: none;">
+                <label>Não preencha: <input name="bot-field" /></label>
+              </p>
+
               <div class="form-group">
                 <label for="nome">Nome</label>
                 <input id="nome" name="nome" type="text" placeholder="Seu nome completo" required />
@@ -534,9 +550,4 @@
 
     <script src="script.js" defer></script>
   </body>
-
 </html>
-
-
-
-
