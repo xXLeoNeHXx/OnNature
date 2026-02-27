@@ -420,12 +420,13 @@
           <div class="orcamento-form-box">
             <!-- NETLIFY FORMS: ajustes para envio funcionar -->
             <form
+              action="/"
+              id="form-contato"
               class="contato-form"
               name="solicitar-orcamento"
               method="POST"
               data-netlify="true"
               data-netlify-honeypot="bot-field"
-              action="/obrigado"
             >
               <!-- obrigatório para o Netlify identificar o form -->
               <input type="hidden" name="form-name" value="solicitar-orcamento" />
@@ -539,6 +540,23 @@
           regulamentações e sustentabilidade.
         </p>
         <button class="modal-close" id="close-blog-modal" type="button">Fechar</button>
+      </div>
+    </div>
+
+    <!-- =======================================================
+      MODAL CONFIRMAÇÃO ENVIO
+    ======================================================== -->
+    <div id="sucesso-modal" class="modal-overlay" aria-hidden="true">
+      <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="sucesso-modal-title">
+        <div class="modal-icon" aria-hidden="true">✅</div>
+        <h3 id="sucesso-modal-title">Mensagem enviada</h3>
+        <p>
+          Recebemos a sua mensagem, agradecemos o contato.<br /><br />
+          Em breve retornaremos.
+        </p>
+        <button class="modal-close" id="close-sucesso-modal" type="button">
+          Fechar
+        </button>
       </div>
     </div>
 
