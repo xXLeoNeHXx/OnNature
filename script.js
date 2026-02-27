@@ -11,6 +11,7 @@
    - BLOG: modal
    - CLIENTES: carrossel infinito contínuo + arrastar (sem pulo)
    - Anti-cópia leve (somente imagens) + atalhos (opcional)
+   - FORM: Netlify Forms via fetch + MODAL de sucesso
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -611,4 +612,61 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
     }
   });
+
+  /* ===================== FORM NETLIFY + MODAL SUCESSO ===================== */
+  (function initFormNetlify() {
+    const form = document.getElementById("form-contato");
+    const sucessoModal = document.getElementById("sucesso-modal");
+    const closeSucessoModal = document.getElementById("close-sucesso-modal");
+
+    if (!form || !sucessoModal) return;
+
+    function openSucesso() {
+      sucessoModal.classList.add("active");
+      sucessoModal.setAttribute("aria-hidden", "false");
+      document.body.style.overflow = "hidden";
+      closeSucessoModal?.focus?.();
+    }
+
+    function closeSucesso() {
+      sucessoModal.classList.remove("active");
+      sucessoModal.setAttribute("aria-hidden", "true");
+      document.body.style.overflow = "";
+    }
+
+    function encodeForm(formEl) {
+      const data = new FormData(formEl);
+      // Netlify funciona melhor e de forma mais previsível com x-www-form-urlencoded
+      return new URLSearchParams(data).toString();
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: encodeForm(form),
+      })
+        .then((response) => {
+          if (!response.ok) throw new Error("Resposta não OK do servidor.");
+          form.reset();
+          openSucesso();
+        })
+        .catch((error) => {
+          console.error("Erro:", error);
+          alert("Erro ao enviar. Tente novamente.");
+        });
+    });
+
+    closeSucessoModal?.addEventListener("click", closeSucesso);
+
+    sucessoModal.addEventListener("click", (e) => {
+      if (e.target === sucessoModal) closeSucesso();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && sucessoModal.classList.contains("active")) closeSucesso();
+    });
+  })();
 });
