@@ -1088,3 +1088,12 @@ footer {
 }
 
 .modal-close:hover { background: #2b2b40; transform: scale(1.05); }
+
+#sucesso-modal:target {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+#sucesso-modal:target .modal-box {
+  transform: translateY(0);
+}
