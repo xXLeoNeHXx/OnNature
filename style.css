@@ -1027,7 +1027,7 @@ footer {
 }
 
 /* =========================================================
-   MODAL BLOG
+   MODAL BLOG (e serve pro SUCESSO também)
 ========================================================= */
 .modal-overlay {
   position: fixed;
@@ -1087,8 +1087,4 @@ footer {
   transition: 0.3s;
 }
 
-
 .modal-close:hover { background: #2b2b40; transform: scale(1.05); }
-
-
-
