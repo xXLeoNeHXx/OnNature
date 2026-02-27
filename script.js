@@ -641,24 +641,34 @@ document.addEventListener("DOMContentLoaded", () => {
       return new URLSearchParams(data).toString();
     }
 
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
+    // ✅ AJUSTE: captura o submit no DOCUMENT (capture=true) para impedir reload com 100% de chance
+    document.addEventListener(
+      "submit",
+      (e) => {
+        const targetForm = e.target;
+        if (!(targetForm instanceof HTMLFormElement)) return;
+        if (targetForm.id !== "form-contato") return;
 
-      fetch("/", {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: encodeForm(form),
-      })
-        .then((response) => {
-          if (!response.ok) throw new Error("Resposta não OK do servidor.");
-          form.reset();
-          openSucesso();
+        e.preventDefault();
+        e.stopPropagation();
+
+        fetch(targetForm.getAttribute("action") || "/", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: encodeForm(targetForm),
         })
-        .catch((error) => {
-          console.error("Erro:", error);
-          alert("Erro ao enviar. Tente novamente.");
-        });
-    });
+          .then((response) => {
+            if (!response.ok) throw new Error("Resposta não OK do servidor.");
+            targetForm.reset();
+            openSucesso();
+          })
+          .catch((error) => {
+            console.error("Erro:", error);
+            alert("Erro ao enviar. Tente novamente.");
+          });
+      },
+      true
+    );
 
     closeSucessoModal?.addEventListener("click", closeSucesso);
 
