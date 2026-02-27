@@ -680,4 +680,24 @@ document.addEventListener("DOMContentLoaded", () => {
       if (e.key === "Escape" && sucessoModal.classList.contains("active")) closeSucesso();
     });
   })();
+   /* ===================== LIMPAR HASH NA URL (topo / modais) ===================== */
+(function clearHashAfterOpen() {
+  const hash = window.location.hash;
+
+  // Se veio do envio e abriu o modal por :target
+  if (hash === "#sucesso-modal") {
+    const modal = document.getElementById("sucesso-modal");
+    if (modal) {
+      // garante que está visível (CSS já faz isso)
+      // limpa o hash sem recarregar
+      history.replaceState(null, "", window.location.pathname + window.location.search);
+    }
+  }
+
+  // Se você não quer ver "#topo" quando clica no logo/voltar ao topo:
+  if (hash === "#topo") {
+    history.replaceState(null, "", window.location.pathname + window.location.search);
+  }
+})();
 });
+
