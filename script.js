@@ -514,6 +514,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (!(w > 0)) return;
       x = x % w;
       if (x > 0) x -= w;
+      return x;
     }
 
     function setTransform() {
