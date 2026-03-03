@@ -199,7 +199,7 @@ document.addEventListener("DOMContentLoaded", () => {
     els.forEach((el) => io.observe(el));
   })();
 
- /* ===================== GALERIA GRID (SINCRONIZADO COM SCROLL REAL) ===================== */
+/* ===================== GALERIA GRID (SINCRONIZADO COM SCROLL REAL) ===================== */
 (function initScrollGridGallery() {
   const viewport = document.querySelector("#gallery-1 .gallery-grid__viewport");
   if (!viewport) return;
@@ -213,38 +213,49 @@ document.addEventListener("DOMContentLoaded", () => {
   const EASE = reduced ? 1 : 0.08;
   const MULTIPLIER = 0.4;
 
-  // ✅ FIX ANDROID: wrap simétrico (evita “pulos” quando x fica positivo no Grid 1)
+  // normaliza para [-w, 0)
   function wrapNeg(x, w) {
     if (!(w > 0)) return x;
     x = ((x % w) + w) % w; // [0, w)
     return x - w;          // [-w, 0)
   }
 
-  // ✅ FIX LOOP: mede a largura do "bloco base" e usa como loop real
-  // Isso evita que o loopW dependa de "scrollWidth/2", que pode variar conforme clones.
   function ensureLoop(track) {
     const parentW = viewport.clientWidth || 1;
 
-    // guarda os nós originais só uma vez
+    // guarda originais e quantidade original
+    if (!track.__originalCount) track.__originalCount = track.children.length;
     if (!track.__originalNodes) {
       track.__originalNodes = Array.from(track.children).map((n) => n.cloneNode(true));
     }
+
     const originals = track.__originalNodes;
-    if (!originals.length) return;
+    const originalCount = track.__originalCount;
+    if (!originals.length || originalCount <= 0) return;
 
-    // reconstrói de forma previsível
+    // reconstrói: pelo menos 2 conjuntos completos (A + A)
     track.innerHTML = "";
-    originals.forEach((n) => track.appendChild(n.cloneNode(true)));
+    for (let k = 0; k < 2; k++) {
+      originals.forEach((n) => track.appendChild(n.cloneNode(true)));
+    }
 
-    // largura do bloco base (1 conjunto original)
-    const baseW = track.scrollWidth || 1;
-    track.__baseWidth = baseW;
-
-    // clona até ter folga suficiente
+    // completa até ter folga suficiente
     let safety = 0;
     while (track.scrollWidth < parentW * 2.6 && safety < 12) {
       originals.forEach((n) => track.appendChild(n.cloneNode(true)));
       safety++;
+    }
+
+    // ✅ mede o loopW REAL: distância do 1º item ao 1º item do 2º conjunto
+    // isso inclui gap e evita desvio no Android
+    const children = track.children;
+    const a0 = children[0];
+    const a1 = children[originalCount]; // primeiro item do 2º conjunto
+    if (a0 && a1) {
+      const loopW = a1.offsetLeft - a0.offsetLeft;
+      track.__loopW = loopW > 0 ? loopW : (track.scrollWidth || 1);
+    } else {
+      track.__loopW = track.scrollWidth || 1;
     }
   }
 
@@ -252,7 +263,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const state = tracks.map((track) => ({
     el: track,
-    dir: Number(track.dataset.baseDir || 1), // Grid 1 = 1, Grid 2 = -1
+    dir: Number(track.dataset.baseDir || 1),
     x: 0,
   }));
 
@@ -260,7 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const scrollPos = window.scrollY;
 
     for (const s of state) {
-      const loopW = s.el.__baseWidth || 1;
+      const loopW = s.el.__loopW || 1;
       const target = scrollPos * MULTIPLIER * s.dir;
 
       s.x = reduced ? target : s.x + (target - s.x) * EASE;
@@ -274,10 +285,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function rebuild() {
     tracks.forEach(ensureLoop);
-
-    // mantém coerência após resize
     for (const s of state) {
-      const loopW = s.el.__baseWidth || 1;
+      const loopW = s.el.__loopW || 1;
       s.x = wrapNeg(s.x, loopW);
       s.el.style.transform = `translate3d(${s.x}px,0,0)`;
     }
@@ -709,4 +718,5 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   })();
 });
+
 
