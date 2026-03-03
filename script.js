@@ -5,7 +5,7 @@
    - Header: some ao descer / aparece ao subir
    - Hero parallax (leve)
    - Reveal (IntersectionObserver)
-   - Galeria GRID (sincronizada com scroll + loop)
+   - Galeria GRID (sincronizada com scroll + loop)  ✅ corrigida p/ Android
    - GRID: desabilitar clique total
    - VALORES: 1 ativo por vez + troca imagem/texto + seta externa + teclado
    - BLOG: modal
@@ -79,7 +79,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Scroll suave (não tenta selecionar href="#" do Blog)
   document
     .querySelectorAll('.nav-links a[href^="#"], .cta-btn[href^="#"]')
     .forEach((link) => {
@@ -214,14 +213,38 @@ document.addEventListener("DOMContentLoaded", () => {
     const EASE = reduced ? 1 : 0.08;
     const MULTIPLIER = 0.4;
 
+    // ✅ Wrap simétrico: sempre normaliza para [-w, 0)
+    // Isso remove os “pulos”/sensação de aceleração no Android quando x fica positivo.
+    function wrapNeg(x, w) {
+      if (!(w > 0)) return x;
+      x = ((x % w) + w) % w; // [0, w)
+      return x - w;          // [-w, 0)
+    }
+
+    // ✅ Monta loop de forma estável: clona SEM usar track.children (que cresce)
+    // e guarda a largura do bloco-base (antes de clonar) para o loopW ser correto.
     function ensureLoop(track) {
       const parentW = viewport.clientWidth || 1;
-      const items = Array.from(track.children);
-      if (!items.length) return;
 
+      // Captura os itens originais apenas uma vez
+      let originals = track.__originalNodes;
+      if (!originals) {
+        originals = Array.from(track.children).map((n) => n.cloneNode(true));
+        track.__originalNodes = originals;
+      }
+
+      // Reconstrói o track para ficar previsível
+      track.innerHTML = "";
+      originals.forEach((n) => track.appendChild(n.cloneNode(true)));
+
+      // Mede a largura do bloco base (ex.: 4 itens)
+      const baseWidth = track.scrollWidth || 1;
+      track.__baseWidth = baseWidth;
+
+      // Garante largura suficiente para não “vazar” durante o scroll
       let safety = 0;
       while (track.scrollWidth < parentW * 2.6 && safety < 12) {
-        for (const it of items) track.appendChild(it.cloneNode(true));
+        originals.forEach((n) => track.appendChild(n.cloneNode(true)));
         safety++;
       }
     }
@@ -234,20 +257,17 @@ document.addEventListener("DOMContentLoaded", () => {
       x: 0,
     }));
 
-    s.x = reduced ? target : s.x + (target - s.x) * EASE;
-s.x = wrapNeg(s.x, loopW);
-s.el.style.transform = `translate3d(${s.x}px,0,0)`;
-
     function tick() {
       const scrollPos = window.scrollY;
 
       for (const s of state) {
-        const loopW = s.el.scrollWidth / 2;
+        // ✅ loopW correto: usa a largura do bloco base (não /2 do scrollWidth total)
+        const loopW = s.el.__baseWidth || (s.el.scrollWidth / 2) || 1;
+
         const target = scrollPos * MULTIPLIER * s.dir;
-
         s.x = reduced ? target : s.x + (target - s.x) * EASE;
-        s.x = wrapNeg(s.x, loopW);
 
+        s.x = wrapNeg(s.x, loopW);
         s.el.style.transform = `translate3d(${s.x}px,0,0)`;
       }
 
@@ -256,6 +276,12 @@ s.el.style.transform = `translate3d(${s.x}px,0,0)`;
 
     function rebuild() {
       tracks.forEach(ensureLoop);
+      // mantém posição coerente após rebuild
+      for (const s of state) {
+        const loopW = s.el.__baseWidth || (s.el.scrollWidth / 2) || 1;
+        s.x = wrapNeg(s.x, loopW);
+        s.el.style.transform = `translate3d(${s.x}px,0,0)`;
+      }
     }
 
     window.addEventListener("resize", rebuild, { passive: true });
@@ -364,7 +390,6 @@ s.el.style.transform = `translate3d(${s.x}px,0,0)`;
       if (focus) tile.focus?.();
     }
 
-    // inicia com o pré-selecionado ou o primeiro
     const preSelected = tiles.find((t) => t.classList.contains("is-active")) || tiles[0];
     tiles.forEach((t) => {
       t.classList.remove("is-active");
@@ -489,11 +514,9 @@ s.el.style.transform = `translate3d(${s.x}px,0,0)`;
         });
       };
 
-      // A + B
       appendSet(false);
       appendSet(true);
 
-      // repete para garantir largura suficiente
       let safety = 0;
       while (track.scrollWidth < marqueeW * 2.2 && safety < 10) {
         appendSet(false);
@@ -581,30 +604,25 @@ s.el.style.transform = `translate3d(${s.x}px,0,0)`;
   })();
 
   /* ===================== ANTI-CÓPIA LEVE (SOMENTE IMAGENS) ===================== */
-  // 1) bloqueia arrastar imagens
   document.querySelectorAll("img").forEach((img) => {
     img.setAttribute("draggable", "false");
   });
 
-  // 2) bloqueia menu de contexto apenas em IMG (não estraga o resto do site)
   document.addEventListener("contextmenu", (e) => {
     if (e.target && e.target.tagName === "IMG") {
       e.preventDefault();
     }
   });
 
-  // 3) atalhos “anti-inspeção” (opcional) — não interfere ao digitar em inputs
   document.addEventListener("keydown", (e) => {
     if (isTypingContext(e.target)) return;
 
     const key = (e.key || "").toLowerCase();
 
-    // copiar/salvar/imprimir/ver fonte
     if ((e.ctrlKey || e.metaKey) && ["c", "u", "s", "p"].includes(key)) {
       e.preventDefault();
     }
 
-    // devtools comuns
     if (e.key === "F12") e.preventDefault();
     if ((e.ctrlKey || e.metaKey) && e.shiftKey && ["i", "j", "c"].includes(key)) {
       e.preventDefault();
@@ -634,11 +652,9 @@ s.el.style.transform = `translate3d(${s.x}px,0,0)`;
 
     function encodeForm(formEl) {
       const data = new FormData(formEl);
-      // Netlify funciona melhor e de forma mais previsível com x-www-form-urlencoded
       return new URLSearchParams(data).toString();
     }
 
-    // ✅ AJUSTE: captura o submit no DOCUMENT (capture=true) para impedir reload com 100% de chance
     document.addEventListener(
       "submit",
       (e) => {
@@ -677,25 +693,20 @@ s.el.style.transform = `translate3d(${s.x}px,0,0)`;
       if (e.key === "Escape" && sucessoModal.classList.contains("active")) closeSucesso();
     });
   })();
-   /* ===================== LIMPAR HASH NA URL (topo / modais) ===================== */
-(function clearHashAfterOpen() {
-  const hash = window.location.hash;
 
-  // Se veio do envio e abriu o modal por :target
-  if (hash === "#sucesso-modal") {
-    const modal = document.getElementById("sucesso-modal");
-    if (modal) {
-      // garante que está visível (CSS já faz isso)
-      // limpa o hash sem recarregar
+  /* ===================== LIMPAR HASH NA URL (topo / modais) ===================== */
+  (function clearHashAfterOpen() {
+    const hash = window.location.hash;
+
+    if (hash === "#sucesso-modal") {
+      const modal = document.getElementById("sucesso-modal");
+      if (modal) {
+        history.replaceState(null, "", window.location.pathname + window.location.search);
+      }
+    }
+
+    if (hash === "#topo") {
       history.replaceState(null, "", window.location.pathname + window.location.search);
     }
-  }
-
-  // Se você não quer ver "#topo" quando clica no logo/voltar ao topo:
-  if (hash === "#topo") {
-    history.replaceState(null, "", window.location.pathname + window.location.search);
-  }
-})();
+  })();
 });
-
-
