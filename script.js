@@ -210,31 +210,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const reduced =
     window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
 
-  const EASE = reduced ? 1 : 0.08;
+  // Se quiser mais “colado” no scroll, aumente. Se quiser mais suave, diminua.
   const MULTIPLIER = 0.4;
 
-  // normaliza para [-w, 0)
-  function wrapNeg(x, w) {
-    if (!(w > 0)) return x;
-    x = ((x % w) + w) % w; // [0, w)
-    return x - w;          // [-w, 0)
-  }
-
-  // escolhe a versão do target (target, target±w) mais perto do x atual
-  function nearestEquivalent(currentX, targetX, w) {
-    if (!(w > 0)) return targetX;
-    const a = targetX;
-    const b = targetX + w;
-    const c = targetX - w;
-
-    const da = Math.abs(a - currentX);
-    const db = Math.abs(b - currentX);
-    const dc = Math.abs(c - currentX);
-
-    if (db < da && db <= dc) return b;
-    if (dc < da && dc < db) return c;
-    return a;
-  }
+  // Suavização opcional (mantém estável no Android). 1 = sem suavização.
+  const EASE = reduced ? 1 : 0.18;
 
   function ensureLoop(track) {
     const parentW = viewport.clientWidth || 1;
@@ -248,18 +228,18 @@ document.addEventListener("DOMContentLoaded", () => {
     const originalCount = track.__originalCount;
     if (!originals.length || originalCount <= 0) return;
 
-    // reconstrói previsível: 2 conjuntos
+    // Reconstrói previsível: 2 conjuntos
     track.innerHTML = "";
     for (let k = 0; k < 2; k++) originals.forEach((n) => track.appendChild(n.cloneNode(true)));
 
-    // completa até ter folga
+    // Completa até ter folga suficiente
     let safety = 0;
     while (track.scrollWidth < parentW * 2.6 && safety < 12) {
       originals.forEach((n) => track.appendChild(n.cloneNode(true)));
       safety++;
     }
 
-    // loopW REAL: início do 2º conjunto - início do 1º
+    // ✅ loopW REAL: distância do 1º item ao 1º item do 2º conjunto
     const children = track.children;
     const a0 = children[0];
     const a1 = children[originalCount];
@@ -275,9 +255,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const state = tracks.map((track) => ({
     el: track,
-    dir: Number(track.dataset.baseDir || 1),
+    dir: Number(track.dataset.baseDir || 1), // 1 ou -1
     x: 0,
   }));
+
+  // Mantém x sempre em [-w, 0)
+  function toNegRange(v, w) {
+    if (!(w > 0)) return 0;
+    let m = v % w;
+    if (m < 0) m += w; // [0, w)
+    return m - w;      // [-w, 0)
+  }
 
   function tick() {
     const scrollPos = window.scrollY;
@@ -285,15 +273,23 @@ document.addEventListener("DOMContentLoaded", () => {
     for (const s of state) {
       const w = s.el.__loopW || 1;
 
-      // ✅ IMPORTANTE: wrap no TARGET também
-      const rawTarget = scrollPos * MULTIPLIER * s.dir;
-      let target = wrapNeg(rawTarget, w);
+      // ✅ AQUI É O PULO DO GATO:
+      // Usamos apenas o progresso modulo (não existe “alvo infinito” pra perseguir).
+      // Grid 1 e Grid 2 usam o mesmo progresso, só invertendo o sentido.
+      const progress = scrollPos * MULTIPLIER;
 
-      // ✅ evita “corrida infinita” escolhendo o equivalente mais próximo do x atual
-      target = nearestEquivalent(s.x, target, w);
+      let desired;
+      if (s.dir >= 0) {
+        // Grid 1: um sentido
+        // Vai para [-w,0) de forma contínua
+        desired = toNegRange(-progress, w);
+      } else {
+        // Grid 2: sentido oposto
+        desired = toNegRange(progress, w);
+      }
 
-      s.x = reduced ? target : s.x + (target - s.x) * EASE;
-      s.x = wrapNeg(s.x, w);
+      // Suavização (se EASE=1 fica travado no scroll sem inércia)
+      s.x = EASE >= 1 ? desired : s.x + (desired - s.x) * EASE;
 
       s.el.style.transform = `translate3d(${s.x}px,0,0)`;
     }
@@ -303,11 +299,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function rebuild() {
     tracks.forEach(ensureLoop);
-    for (const s of state) {
-      const w = s.el.__loopW || 1;
-      s.x = wrapNeg(s.x, w);
-      s.el.style.transform = `translate3d(${s.x}px,0,0)`;
-    }
   }
 
   window.addEventListener("resize", rebuild, { passive: true });
@@ -315,7 +306,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
   rebuild();
   requestAnimationFrame(tick);
-})();ationFrame(tick);
 })();
 
   /* ===================== GRID: DESABILITAR CLIQUE TOTAL ===================== */
@@ -737,6 +727,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   })();
 });
+
 
 
 
