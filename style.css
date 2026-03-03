@@ -1,7 +1,7 @@
 /* =========================================================
    On Nature - style.css (REESTRUTURADO / LIMPO / REFINADO)
    ✅ Revisado: HERO (YouTube no Android/Chrome) sem faixas pretas
-   ✅ Revisado: película (overlay) 100% do mesmo tamanho do HERO no Android
+   ✅ Revisado: overlay sempre cobrindo (inclusive quando o Chrome muda a altura útil)
 ========================================================= */
 
 /* =========================================================
@@ -211,20 +211,22 @@ body > header {
 .menu-toggle.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
 
 /* =========================================================
-   HERO (VÍDEO) — FIX COMPLETO ANDROID/CHROME
-   Objetivo:
-   - iframe cobre a área (sem faixas pretas)
-   - overlay (película) cobre EXATAMENTE a mesma área do HERO
+   HERO (VÍDEO) — FIX DEFINITIVO ANDROID/CHROME
+   - usa dvh/svh (viewport dinâmico) para não “sobrar faixa”
+   - iframe 100% + scale (cover) evita qualquer letterbox em cima/baixo
+   - overlay sempre 100% e por cima
 ========================================================= */
 .video-section {
   position: relative;
   width: 100%;
-  height: 95vh;
+  height: 95vh;      /* fallback */
+  height: 95svh;     /* viewport “small” (mais estável em mobile) */
+  height: 95dvh;     /* viewport dinâmico (Chrome Android) */
   background: #0e0e0e;
   overflow: hidden;
 }
 
-/* 🔒 Garantir que o container de vídeo seja “full bleed” dentro do HERO */
+/* container do vídeo sempre ocupando tudo */
 .video-container {
   position: absolute;
   inset: 0;
@@ -235,24 +237,24 @@ body > header {
   z-index: 0;
 }
 
-/* ✅ Cover real: cobre ALTURA (corta laterais) mantendo 16:9
-   Importantíssimo: o iframe NÃO cria camada acima do overlay. */
+/* ✅ método mais estável: ocupa 100% e “cover” via scale */
 .video-container iframe {
   position: absolute;
-  top: 50%;
-  left: 50%;
+  inset: 0;
+  width: 100%;
+  height: 100%;
 
-  height: 120%;
-  width: 213.333%; /* 120% * (16/9) */
+  /* cobre sem faixas (corta laterais/um pouco de cima/baixo se preciso) */
+  transform: scale(1.22);
+  transform-origin: center center;
 
-  transform: translate(-50%, -50%);
   border: 0;
   pointer-events: none;
 
   z-index: 0;
 }
 
-/* ✅ Película: sempre do mesmo tamanho do HERO */
+/* overlay 100% sempre por cima */
 .video-overlay {
   position: absolute;
   inset: 0;
@@ -271,16 +273,20 @@ body > header {
   will-change: transform;
 }
 
-/* Mobile: mais “alto” para telas 20:9 (Poco X6 Pro / Chrome)
-   Mantém a altura do HERO em 50vh como você já tinha. */
+/* Mobile */
 @media (max-width: 768px) {
   .overlay-title { font-size: 2.7rem; }
   .overlay-subtitle { font-size: 1.15rem; }
-  .video-section { height: 50vh; }
 
+  .video-section {
+    height: 50vh;   /* fallback */
+    height: 50svh;  /* estabilidade mobile */
+    height: 50dvh;  /* dinâmico */
+  }
+
+  /* mais “agressivo” em telas 20:9 */
   .video-container iframe {
-    height: 135%;
-    width: 240%; /* 135% * (16/9) */
+    transform: scale(1.35);
   }
 }
 
