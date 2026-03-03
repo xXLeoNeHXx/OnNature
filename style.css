@@ -1099,7 +1099,7 @@ footer {
 }
 
 /* =========================================================
-   FIX: YouTube iframe como "cover" (remove faixas pretas no Android)
+   FIX: tirar faixas pretas (altura) no YouTube iframe - Chrome Android
 ========================================================= */
 
 .video-container{
@@ -1110,33 +1110,26 @@ footer {
   background: #000;
 }
 
-/* Cover de verdade: mantém 16:9 e expande até cobrir o container */
+/* Faz o vídeo cobrir a ALTURA (corta laterais se precisar) */
 .video-container iframe{
   position: absolute;
   top: 50%;
   left: 50%;
 
-  /* 16:9 fixo, em função do HEIGHT do container */
-  height: 100%;
-  width: calc(100vh * (16 / 9)); /* fallback (vai ser sobrescrito abaixo) */
-
-  /* O correto é em função da altura da própria seção (100%) */
-  width: calc(100% * (16 / 9));  /* se a seção for mais “larga”, cobre */
-  height: calc(100% * (9 / 16)); /* se a seção for mais “alta”, cobre */
-
-  /* A mágica: usa o maior entre as duas situações */
-  min-width: 100%;
-  min-height: 100%;
+  height: 120%;          /* ✅ aumenta a altura pra eliminar faixa preta em cima/baixo */
+  width: 213.333%;       /* 120% * (16/9) = 213.333% (mantém 16:9 sem distorcer) */
 
   transform: translate(-50%, -50%);
   border: 0;
   pointer-events: none;
 }
 
-/* No Poco X6 Pro (tela alta), aumente um pouco a altura do hero no mobile */
-@media (max-width: 768px) {
-  .video-section{
-    height: 60vh; /* antes era 50vh */
+/* No mobile (se quiser um pouco mais agressivo) */
+@media (max-width: 768px){
+  .video-container iframe{
+    height: 135%;
+    width: 240%;         /* 135% * 16/9 = 240% */
   }
 }
+
 
