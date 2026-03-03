@@ -1,5 +1,6 @@
 /* =========================================================
    On Nature - style.css (REESTRUTURADO / LIMPO / REFINADO)
+   ✅ Revisado: correção do HERO (YouTube no Android/Chrome) sem faixas pretas
 ========================================================= */
 
 /* =========================================================
@@ -48,17 +49,12 @@ body {
 
 /* =========================================================
    ANTI-CÓPIA LEVE (SEM QUEBRAR O SITE)
-   - Não bloqueia seleção global do site (melhor UX)
-   - Impede arrastar imagens (cópia por arrasto)
 ========================================================= */
-
-/* impede “arrastar imagem para desktop” (não impede devtools, mas reduz cópia casual) */
 img {
   -webkit-user-drag: none;
   user-drag: none;
 }
 
-/* opcional: impedir seleção só em áreas visuais (não afeta formulário) */
 #gallery-1,
 #valores,
 .banner-between {
@@ -224,18 +220,39 @@ body > header {
   overflow: hidden;
 }
 
-.video-container { width: 100%; height: 100%; position: relative; }
+.video-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  background: #000;
+}
 
+/* ✅ Cover real no Android/Chrome (remove faixas pretas em cima/baixo)
+   - Mantém o vídeo proporcional (16:9) e cobre altura, cortando laterais se necessário. */
 .video-container iframe {
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 150%;
-  height: 150%;
+
+  height: 120%;
+  width: 213.333%; /* 120% * (16/9) */
+
   transform: translate(-50%, -50%);
-  object-fit: cover;
   pointer-events: none;
   border: 0;
+}
+
+/* Mobile: mais “alto” para telas 20:9 (Poco X6 Pro) */
+@media (max-width: 768px) {
+  .overlay-title { font-size: 2.7rem; }
+  .overlay-subtitle { font-size: 1.15rem; }
+  .video-section { height: 50vh; }
+
+  .video-container iframe {
+    height: 135%;
+    width: 240%; /* 135% * (16/9) */
+  }
 }
 
 .video-overlay {
@@ -306,12 +323,6 @@ body > header {
 
 .btn-animado:hover::after { width: 10px; height: 10px; }
 .btn-animado:hover { background: #f0f0f0; color: #2b2b40; }
-
-@media (max-width: 768px) {
-  .overlay-title { font-size: 2.7rem; }
-  .overlay-subtitle { font-size: 1.15rem; }
-  .video-section { height: 50vh; }
-}
 
 /* =========================================================
    SEÇÕES PADRÃO
@@ -1097,39 +1108,3 @@ footer {
 #sucesso-modal:target .modal-box {
   transform: translateY(0);
 }
-
-/* =========================================================
-   FIX: tirar faixas pretas (altura) no YouTube iframe - Chrome Android
-========================================================= */
-
-.video-container{
-  position: relative;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  background: #000;
-}
-
-/* Faz o vídeo cobrir a ALTURA (corta laterais se precisar) */
-.video-container iframe{
-  position: absolute;
-  top: 50%;
-  left: 50%;
-
-  height: 120%;          /* ✅ aumenta a altura pra eliminar faixa preta em cima/baixo */
-  width: 213.333%;       /* 120% * (16/9) = 213.333% (mantém 16:9 sem distorcer) */
-
-  transform: translate(-50%, -50%);
-  border: 0;
-  pointer-events: none;
-}
-
-/* No mobile (se quiser um pouco mais agressivo) */
-@media (max-width: 768px){
-  .video-container iframe{
-    height: 135%;
-    width: 240%;         /* 135% * 16/9 = 240% */
-  }
-}
-
-
