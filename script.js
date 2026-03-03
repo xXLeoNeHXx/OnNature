@@ -100,6 +100,29 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
 
+   /* ===================== LIMPAR HASH (logo / orçamento / etc.) ===================== */
+(function initClearHashOnNavClicks() {
+  // limpa o hash após navegar por âncoras específicas
+  const cleanHashes = new Set(["#topo", "#orcamento"]);
+
+  function clearHashIfNeeded(hash) {
+    if (!hash || !cleanHashes.has(hash)) return;
+    // remove #... mantendo path e querystring, sem reload
+    history.replaceState(null, "", window.location.pathname + window.location.search);
+  }
+
+  // 1) ao clicar nos links (logo e botão orçamento)
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    const href = a.getAttribute("href");
+    clearHashIfNeeded(href);
+  });
+
+  // 2) se a página abrir já com hash desses
+  clearHashIfNeeded(window.location.hash);
+})();
+   
   /* ===================== BOTÃO TOPO ===================== */
   if (btnTopo) {
     btnTopo.classList.remove("is-visible");
@@ -727,6 +750,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   })();
 });
+
 
 
 
