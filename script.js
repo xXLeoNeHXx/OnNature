@@ -220,10 +220,25 @@ document.addEventListener("DOMContentLoaded", () => {
     return x - w;          // [-w, 0)
   }
 
+  // escolhe a versão do target (target, target±w) mais perto do x atual
+  function nearestEquivalent(currentX, targetX, w) {
+    if (!(w > 0)) return targetX;
+    const a = targetX;
+    const b = targetX + w;
+    const c = targetX - w;
+
+    const da = Math.abs(a - currentX);
+    const db = Math.abs(b - currentX);
+    const dc = Math.abs(c - currentX);
+
+    if (db < da && db <= dc) return b;
+    if (dc < da && dc < db) return c;
+    return a;
+  }
+
   function ensureLoop(track) {
     const parentW = viewport.clientWidth || 1;
 
-    // guarda originais e quantidade original
     if (!track.__originalCount) track.__originalCount = track.children.length;
     if (!track.__originalNodes) {
       track.__originalNodes = Array.from(track.children).map((n) => n.cloneNode(true));
@@ -233,27 +248,24 @@ document.addEventListener("DOMContentLoaded", () => {
     const originalCount = track.__originalCount;
     if (!originals.length || originalCount <= 0) return;
 
-    // reconstrói: pelo menos 2 conjuntos completos (A + A)
+    // reconstrói previsível: 2 conjuntos
     track.innerHTML = "";
-    for (let k = 0; k < 2; k++) {
-      originals.forEach((n) => track.appendChild(n.cloneNode(true)));
-    }
+    for (let k = 0; k < 2; k++) originals.forEach((n) => track.appendChild(n.cloneNode(true)));
 
-    // completa até ter folga suficiente
+    // completa até ter folga
     let safety = 0;
     while (track.scrollWidth < parentW * 2.6 && safety < 12) {
       originals.forEach((n) => track.appendChild(n.cloneNode(true)));
       safety++;
     }
 
-    // ✅ mede o loopW REAL: distância do 1º item ao 1º item do 2º conjunto
-    // isso inclui gap e evita desvio no Android
+    // loopW REAL: início do 2º conjunto - início do 1º
     const children = track.children;
     const a0 = children[0];
-    const a1 = children[originalCount]; // primeiro item do 2º conjunto
+    const a1 = children[originalCount];
     if (a0 && a1) {
-      const loopW = a1.offsetLeft - a0.offsetLeft;
-      track.__loopW = loopW > 0 ? loopW : (track.scrollWidth || 1);
+      const w = a1.offsetLeft - a0.offsetLeft;
+      track.__loopW = w > 0 ? w : (track.scrollWidth || 1);
     } else {
       track.__loopW = track.scrollWidth || 1;
     }
@@ -271,11 +283,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const scrollPos = window.scrollY;
 
     for (const s of state) {
-      const loopW = s.el.__loopW || 1;
-      const target = scrollPos * MULTIPLIER * s.dir;
+      const w = s.el.__loopW || 1;
+
+      // ✅ IMPORTANTE: wrap no TARGET também
+      const rawTarget = scrollPos * MULTIPLIER * s.dir;
+      let target = wrapNeg(rawTarget, w);
+
+      // ✅ evita “corrida infinita” escolhendo o equivalente mais próximo do x atual
+      target = nearestEquivalent(s.x, target, w);
 
       s.x = reduced ? target : s.x + (target - s.x) * EASE;
-      s.x = wrapNeg(s.x, loopW);
+      s.x = wrapNeg(s.x, w);
 
       s.el.style.transform = `translate3d(${s.x}px,0,0)`;
     }
@@ -286,8 +304,8 @@ document.addEventListener("DOMContentLoaded", () => {
   function rebuild() {
     tracks.forEach(ensureLoop);
     for (const s of state) {
-      const loopW = s.el.__loopW || 1;
-      s.x = wrapNeg(s.x, loopW);
+      const w = s.el.__loopW || 1;
+      s.x = wrapNeg(s.x, w);
       s.el.style.transform = `translate3d(${s.x}px,0,0)`;
     }
   }
@@ -297,6 +315,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   rebuild();
   requestAnimationFrame(tick);
+})();ationFrame(tick);
 })();
 
   /* ===================== GRID: DESABILITAR CLIQUE TOTAL ===================== */
@@ -718,5 +737,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   })();
 });
+
 
 
