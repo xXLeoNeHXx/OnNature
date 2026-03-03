@@ -1,17 +1,18 @@
 /* =========================================================
    On Nature - script.js (organizado, limpo e robusto)
    - Menu mobile + scroll suave (a11y)
+   - Âncoras SEM hash na URL (logo / orçamento / topo) ✅
    - Botão topo (classe is-visible)
    - Header: some ao descer / aparece ao subir
    - Hero parallax (leve)
    - Reveal (IntersectionObserver)
-   - Galeria GRID (sincronizada com scroll + loop)  ✅ corrigida p/ Android
+   - Galeria GRID (sincronizada com scroll + loop) ✅ Android
    - GRID: desabilitar clique total
    - VALORES: 1 ativo por vez + troca imagem/texto + seta externa + teclado
    - BLOG: modal
-   - CLIENTES: carrossel infinito contínuo + arrastar (sem pulo)
+   - CLIENTES: carrossel infinito contínuo + arrastar
    - Anti-cópia leve (somente imagens) + atalhos (opcional)
-   - FORM: Netlify Forms via fetch + MODAL de sucesso
+   - FORM: Netlify Forms via fetch + MODAL de sucesso (sem hash)
 ========================================================= */
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -40,9 +41,13 @@ document.addEventListener("DOMContentLoaded", () => {
     setMenuState(false);
   }
 
+  function getHeaderOffset() {
+    return header ? header.offsetHeight : 0;
+  }
+
   function smoothScrollToTarget(targetEl) {
     if (!targetEl) return;
-    const headerOffset = header ? header.offsetHeight : 0;
+    const headerOffset = getHeaderOffset();
     const y = targetEl.getBoundingClientRect().top + window.pageYOffset - headerOffset;
     window.scrollTo({ top: y, behavior: supportsSmoothScroll ? "smooth" : "auto" });
   }
@@ -53,7 +58,26 @@ document.addEventListener("DOMContentLoaded", () => {
     return tag === "input" || tag === "textarea" || tag === "select" || el.isContentEditable;
   }
 
-  /* ===================== MENU + SCROLL ===================== */
+  function removeHashFromUrl() {
+    // remove #... mantendo path e query, sem reload
+    history.replaceState(null, "", window.location.pathname + window.location.search);
+  }
+
+  function removeHashAfterBrowserUpdates() {
+    // Em Android/Chrome, às vezes o hash é aplicado depois do click — garantimos limpar depois
+    requestAnimationFrame(() => removeHashFromUrl());
+  }
+
+  function getAnchorTarget(hash) {
+    if (!hash || hash === "#") return null;
+    try {
+      return document.querySelector(hash);
+    } catch {
+      return null;
+    }
+  }
+
+  /* ===================== MENU MOBILE ===================== */
   if (toggle && navLinks) {
     toggle.setAttribute("aria-controls", "nav-links");
     toggle.setAttribute("aria-expanded", "false");
@@ -79,50 +103,55 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  document
-    .querySelectorAll('.nav-links a[href^="#"], .cta-btn[href^="#"]')
-    .forEach((link) => {
-      link.addEventListener("click", function (e) {
-        const href = this.getAttribute("href");
-        if (!href || href === "#") return;
+  /* ===================== ÂNCORAS SEM HASH NA URL ✅ ===================== */
+  (function initAnchorScrollNoHash() {
+    // hashes que NÃO devem aparecer nunca na URL
+    const cleanHashes = new Set(["#topo", "#orcamento", "#sucesso-modal"]);
 
-        let target = null;
-        try {
-          target = document.querySelector(href);
-        } catch {
-          return;
-        }
-        if (!target) return;
+    function handleAnchor(hash) {
+      const target = getAnchorTarget(hash);
+      if (!target) return false;
 
-        e.preventDefault();
-        smoothScrollToTarget(target);
-        closeMobileMenu();
-      });
+      smoothScrollToTarget(target);
+      closeMobileMenu();
+
+      // Se for um hash “proibido”, garantimos limpar
+      if (cleanHashes.has(hash)) removeHashAfterBrowserUpdates();
+
+      // Mesmo para outros hashes, se você preferir NUNCA ter # na URL,
+      // descomente a linha abaixo:
+      // removeHashAfterBrowserUpdates();
+
+      return true;
+    }
+
+    // Intercepta clique em QUALQUER âncora (inclui logo)
+    document.addEventListener("click", (e) => {
+      const a = e.target.closest('a[href^="#"]');
+      if (!a) return;
+
+      const hash = a.getAttribute("href");
+      if (!hash || hash === "#") return;
+
+      e.preventDefault();
+      handleAnchor(hash);
+
+      // Se for topo/orçamento, não deixa o hash “grudar”
+      if (cleanHashes.has(hash)) removeHashAfterBrowserUpdates();
     });
 
-   /* ===================== LIMPAR HASH (logo / orçamento / etc.) ===================== */
-(function initClearHashOnNavClicks() {
-  // limpa o hash após navegar por âncoras específicas
-  const cleanHashes = new Set(["#topo", "#orcamento"]);
+    // Se algum hash proibido aparecer (colar URL, etc.), limpa
+    window.addEventListener("hashchange", () => {
+      if (cleanHashes.has(window.location.hash)) removeHashAfterBrowserUpdates();
+    });
 
-  function clearHashIfNeeded(hash) {
-    if (!hash || !cleanHashes.has(hash)) return;
-    // remove #... mantendo path e querystring, sem reload
-    history.replaceState(null, "", window.location.pathname + window.location.search);
-  }
+    // Se abriu a página já com hash proibido, rola e limpa
+    if (cleanHashes.has(window.location.hash)) {
+      handleAnchor(window.location.hash);
+      removeHashAfterBrowserUpdates();
+    }
+  })();
 
-  // 1) ao clicar nos links (logo e botão orçamento)
-  document.addEventListener("click", (e) => {
-    const a = e.target.closest('a[href^="#"]');
-    if (!a) return;
-    const href = a.getAttribute("href");
-    clearHashIfNeeded(href);
-  });
-
-  // 2) se a página abrir já com hash desses
-  clearHashIfNeeded(window.location.hash);
-})();
-   
   /* ===================== BOTÃO TOPO ===================== */
   if (btnTopo) {
     btnTopo.classList.remove("is-visible");
@@ -142,6 +171,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     btnTopo.addEventListener("click", () => {
       window.scrollTo({ top: 0, behavior: supportsSmoothScroll ? "smooth" : "auto" });
+      // garante que não aparece #topo por nada
+      removeHashAfterBrowserUpdates();
     });
   }
 
@@ -222,114 +253,99 @@ document.addEventListener("DOMContentLoaded", () => {
     els.forEach((el) => io.observe(el));
   })();
 
-/* ===================== GALERIA GRID (SINCRONIZADO COM SCROLL REAL) ===================== */
-(function initScrollGridGallery() {
-  const viewport = document.querySelector("#gallery-1 .gallery-grid__viewport");
-  if (!viewport) return;
+  /* ===================== GALERIA GRID (SINCRONIZADO COM SCROLL REAL) ===================== */
+  (function initScrollGridGallery() {
+    const viewport = document.querySelector("#gallery-1 .gallery-grid__viewport");
+    if (!viewport) return;
 
-  const tracks = Array.from(document.querySelectorAll("#gallery-1 .grid-track"));
-  if (!tracks.length) return;
+    const tracks = Array.from(document.querySelectorAll("#gallery-1 .grid-track"));
+    if (!tracks.length) return;
 
-  const reduced =
-    window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
+    const reduced =
+      window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
 
-  // Se quiser mais “colado” no scroll, aumente. Se quiser mais suave, diminua.
-  const MULTIPLIER = 0.4;
+    // Mais “colado” no scroll = maior. Mais suave = menor.
+    const MULTIPLIER = 0.4;
+    // 1 = sem suavização. Menor = mais inércia.
+    const EASE = reduced ? 1 : 0.18;
 
-  // Suavização opcional (mantém estável no Android). 1 = sem suavização.
-  const EASE = reduced ? 1 : 0.18;
+    function ensureLoop(track) {
+      const parentW = viewport.clientWidth || 1;
 
-  function ensureLoop(track) {
-    const parentW = viewport.clientWidth || 1;
-
-    if (!track.__originalCount) track.__originalCount = track.children.length;
-    if (!track.__originalNodes) {
-      track.__originalNodes = Array.from(track.children).map((n) => n.cloneNode(true));
-    }
-
-    const originals = track.__originalNodes;
-    const originalCount = track.__originalCount;
-    if (!originals.length || originalCount <= 0) return;
-
-    // Reconstrói previsível: 2 conjuntos
-    track.innerHTML = "";
-    for (let k = 0; k < 2; k++) originals.forEach((n) => track.appendChild(n.cloneNode(true)));
-
-    // Completa até ter folga suficiente
-    let safety = 0;
-    while (track.scrollWidth < parentW * 2.6 && safety < 12) {
-      originals.forEach((n) => track.appendChild(n.cloneNode(true)));
-      safety++;
-    }
-
-    // ✅ loopW REAL: distância do 1º item ao 1º item do 2º conjunto
-    const children = track.children;
-    const a0 = children[0];
-    const a1 = children[originalCount];
-    if (a0 && a1) {
-      const w = a1.offsetLeft - a0.offsetLeft;
-      track.__loopW = w > 0 ? w : (track.scrollWidth || 1);
-    } else {
-      track.__loopW = track.scrollWidth || 1;
-    }
-  }
-
-  tracks.forEach(ensureLoop);
-
-  const state = tracks.map((track) => ({
-    el: track,
-    dir: Number(track.dataset.baseDir || 1), // 1 ou -1
-    x: 0,
-  }));
-
-  // Mantém x sempre em [-w, 0)
-  function toNegRange(v, w) {
-    if (!(w > 0)) return 0;
-    let m = v % w;
-    if (m < 0) m += w; // [0, w)
-    return m - w;      // [-w, 0)
-  }
-
-  function tick() {
-    const scrollPos = window.scrollY;
-
-    for (const s of state) {
-      const w = s.el.__loopW || 1;
-
-      // ✅ AQUI É O PULO DO GATO:
-      // Usamos apenas o progresso modulo (não existe “alvo infinito” pra perseguir).
-      // Grid 1 e Grid 2 usam o mesmo progresso, só invertendo o sentido.
-      const progress = scrollPos * MULTIPLIER;
-
-      let desired;
-      if (s.dir >= 0) {
-        // Grid 1: um sentido
-        // Vai para [-w,0) de forma contínua
-        desired = toNegRange(-progress, w);
-      } else {
-        // Grid 2: sentido oposto
-        desired = toNegRange(progress, w);
+      if (!track.__originalCount) track.__originalCount = track.children.length;
+      if (!track.__originalNodes) {
+        track.__originalNodes = Array.from(track.children).map((n) => n.cloneNode(true));
       }
 
-      // Suavização (se EASE=1 fica travado no scroll sem inércia)
-      s.x = EASE >= 1 ? desired : s.x + (desired - s.x) * EASE;
+      const originals = track.__originalNodes;
+      const originalCount = track.__originalCount;
+      if (!originals.length || originalCount <= 0) return;
 
-      s.el.style.transform = `translate3d(${s.x}px,0,0)`;
+      // Reconstrói previsível: 2 conjuntos
+      track.innerHTML = "";
+      for (let k = 0; k < 2; k++) originals.forEach((n) => track.appendChild(n.cloneNode(true)));
+
+      // Completa até ter folga suficiente
+      let safety = 0;
+      while (track.scrollWidth < parentW * 2.6 && safety < 12) {
+        originals.forEach((n) => track.appendChild(n.cloneNode(true)));
+        safety++;
+      }
+
+      // loopW REAL: distância do 1º item ao 1º item do 2º conjunto
+      const children = track.children;
+      const a0 = children[0];
+      const a1 = children[originalCount];
+      if (a0 && a1) {
+        const w = a1.offsetLeft - a0.offsetLeft;
+        track.__loopW = w > 0 ? w : (track.scrollWidth || 1);
+      } else {
+        track.__loopW = track.scrollWidth || 1;
+      }
     }
 
-    requestAnimationFrame(tick);
-  }
-
-  function rebuild() {
     tracks.forEach(ensureLoop);
-  }
 
-  window.addEventListener("resize", rebuild, { passive: true });
-  window.addEventListener("load", rebuild, { once: true });
+    const state = tracks.map((track) => ({
+      el: track,
+      dir: Number(track.dataset.baseDir || 1), // 1 ou -1
+      x: 0,
+    }));
 
-  rebuild();
-  requestAnimationFrame(tick);
-})();
+    function toNegRange(v, w) {
+      if (!(w > 0)) return 0;
+      let m = v % w;
+      if (m < 0) m += w; // [0, w)
+      return m - w;      // [-w, 0)
+    }
+
+    function tick() {
+      const scrollPos = window.scrollY;
+
+      for (const s of state) {
+        const w = s.el.__loopW || 1;
+        const progress = scrollPos * MULTIPLIER;
+
+        const desired =
+          s.dir >= 0 ? toNegRange(-progress, w) : toNegRange(progress, w);
+
+        s.x = EASE >= 1 ? desired : s.x + (desired - s.x) * EASE;
+        s.el.style.transform = `translate3d(${s.x}px,0,0)`;
+      }
+
+      requestAnimationFrame(tick);
+    }
+
+    function rebuild() {
+      tracks.forEach(ensureLoop);
+    }
+
+    window.addEventListener("resize", rebuild, { passive: true });
+    window.addEventListener("load", rebuild, { once: true });
+
+    rebuild();
+    requestAnimationFrame(tick);
+  })();
 
   /* ===================== GRID: DESABILITAR CLIQUE TOTAL ===================== */
   (function disableGridClick() {
@@ -491,6 +507,7 @@ document.addEventListener("DOMContentLoaded", () => {
       modal.setAttribute("aria-hidden", "false");
       document.body.style.overflow = "hidden";
       closeBtn.focus?.();
+      removeHashAfterBrowserUpdates(); // garante URL limpa
     }
 
     function closeModal() {
@@ -498,6 +515,7 @@ document.addEventListener("DOMContentLoaded", () => {
       modal.setAttribute("aria-hidden", "true");
       document.body.style.overflow = "";
       blogLink.focus?.();
+      removeHashAfterBrowserUpdates();
     }
 
     blogLink.addEventListener("click", (e) => {
@@ -626,7 +644,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     function rebuild() {
-      cancelAnimationFrame(rafId);
+      if (rafId) cancelAnimationFrame(rafId);
       rafId = null;
       lastTs = 0;
 
@@ -659,6 +677,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const key = (e.key || "").toLowerCase();
 
+    // (opcional) bloqueios de atalhos mais comuns
     if ((e.ctrlKey || e.metaKey) && ["c", "u", "s", "p"].includes(key)) {
       e.preventDefault();
     }
@@ -669,7 +688,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  /* ===================== FORM NETLIFY + MODAL SUCESSO ===================== */
+  /* ===================== FORM NETLIFY + MODAL SUCESSO (SEM HASH) ===================== */
   (function initFormNetlify() {
     const form = document.getElementById("form-contato");
     const sucessoModal = document.getElementById("sucesso-modal");
@@ -682,12 +701,14 @@ document.addEventListener("DOMContentLoaded", () => {
       sucessoModal.setAttribute("aria-hidden", "false");
       document.body.style.overflow = "hidden";
       closeSucessoModal?.focus?.();
+      removeHashAfterBrowserUpdates();
     }
 
     function closeSucesso() {
       sucessoModal.classList.remove("active");
       sucessoModal.setAttribute("aria-hidden", "true");
       document.body.style.overflow = "";
+      removeHashAfterBrowserUpdates();
     }
 
     function encodeForm(formEl) {
@@ -734,24 +755,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   })();
 
-  /* ===================== LIMPAR HASH NA URL (topo / modais) ===================== */
-  (function clearHashAfterOpen() {
-    const hash = window.location.hash;
-
-    if (hash === "#sucesso-modal") {
-      const modal = document.getElementById("sucesso-modal");
-      if (modal) {
-        history.replaceState(null, "", window.location.pathname + window.location.search);
-      }
-    }
-
-    if (hash === "#topo") {
-      history.replaceState(null, "", window.location.pathname + window.location.search);
-    }
+  /* ===================== LIMPEZA FINAL (se algo colocou hash) ===================== */
+  (function finalUrlCleanIfNeeded() {
+    const forbidden = new Set(["#topo", "#orcamento", "#sucesso-modal"]);
+    if (forbidden.has(window.location.hash)) removeHashAfterBrowserUpdates();
   })();
 });
-
-
-
-
-
