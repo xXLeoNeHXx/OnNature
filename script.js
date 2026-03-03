@@ -234,12 +234,9 @@ document.addEventListener("DOMContentLoaded", () => {
       x: 0,
     }));
 
-    function wrapNeg(x, w) {
-      if (!(w > 0)) return x;
-      x = x % w;
-      if (x > 0) x -= w;
-      return x;
-    }
+    s.x = reduced ? target : s.x + (target - s.x) * EASE;
+s.x = wrapNeg(s.x, loopW);
+s.el.style.transform = `translate3d(${s.x}px,0,0)`;
 
     function tick() {
       const scrollPos = window.scrollY;
@@ -700,4 +697,5 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 })();
 });
+
 
