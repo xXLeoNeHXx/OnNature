@@ -199,97 +199,96 @@ document.addEventListener("DOMContentLoaded", () => {
     els.forEach((el) => io.observe(el));
   })();
 
-  /* ===================== GALERIA GRID (SINCRONIZADO COM SCROLL REAL) ===================== */
-  (function initScrollGridGallery() {
-    const viewport = document.querySelector("#gallery-1 .gallery-grid__viewport");
-    if (!viewport) return;
+ /* ===================== GALERIA GRID (SINCRONIZADO COM SCROLL REAL) ===================== */
+(function initScrollGridGallery() {
+  const viewport = document.querySelector("#gallery-1 .gallery-grid__viewport");
+  if (!viewport) return;
 
-    const tracks = Array.from(document.querySelectorAll("#gallery-1 .grid-track"));
-    if (!tracks.length) return;
+  const tracks = Array.from(document.querySelectorAll("#gallery-1 .grid-track"));
+  if (!tracks.length) return;
 
-    const reduced =
-      window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
+  const reduced =
+    window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches ?? false;
 
-    const EASE = reduced ? 1 : 0.08;
-    const MULTIPLIER = 0.4;
+  const EASE = reduced ? 1 : 0.08;
+  const MULTIPLIER = 0.4;
 
-    // ✅ Wrap simétrico: sempre normaliza para [-w, 0)
-    // Isso remove os “pulos”/sensação de aceleração no Android quando x fica positivo.
-    function wrapNeg(x, w) {
-      if (!(w > 0)) return x;
-      x = ((x % w) + w) % w; // [0, w)
-      return x - w;          // [-w, 0)
+  // ✅ FIX ANDROID: wrap simétrico (evita “pulos” quando x fica positivo no Grid 1)
+  function wrapNeg(x, w) {
+    if (!(w > 0)) return x;
+    x = ((x % w) + w) % w; // [0, w)
+    return x - w;          // [-w, 0)
+  }
+
+  // ✅ FIX LOOP: mede a largura do "bloco base" e usa como loop real
+  // Isso evita que o loopW dependa de "scrollWidth/2", que pode variar conforme clones.
+  function ensureLoop(track) {
+    const parentW = viewport.clientWidth || 1;
+
+    // guarda os nós originais só uma vez
+    if (!track.__originalNodes) {
+      track.__originalNodes = Array.from(track.children).map((n) => n.cloneNode(true));
     }
+    const originals = track.__originalNodes;
+    if (!originals.length) return;
 
-    // ✅ Monta loop de forma estável: clona SEM usar track.children (que cresce)
-    // e guarda a largura do bloco-base (antes de clonar) para o loopW ser correto.
-    function ensureLoop(track) {
-      const parentW = viewport.clientWidth || 1;
+    // reconstrói de forma previsível
+    track.innerHTML = "";
+    originals.forEach((n) => track.appendChild(n.cloneNode(true)));
 
-      // Captura os itens originais apenas uma vez
-      let originals = track.__originalNodes;
-      if (!originals) {
-        originals = Array.from(track.children).map((n) => n.cloneNode(true));
-        track.__originalNodes = originals;
-      }
+    // largura do bloco base (1 conjunto original)
+    const baseW = track.scrollWidth || 1;
+    track.__baseWidth = baseW;
 
-      // Reconstrói o track para ficar previsível
-      track.innerHTML = "";
+    // clona até ter folga suficiente
+    let safety = 0;
+    while (track.scrollWidth < parentW * 2.6 && safety < 12) {
       originals.forEach((n) => track.appendChild(n.cloneNode(true)));
+      safety++;
+    }
+  }
 
-      // Mede a largura do bloco base (ex.: 4 itens)
-      const baseWidth = track.scrollWidth || 1;
-      track.__baseWidth = baseWidth;
+  tracks.forEach(ensureLoop);
 
-      // Garante largura suficiente para não “vazar” durante o scroll
-      let safety = 0;
-      while (track.scrollWidth < parentW * 2.6 && safety < 12) {
-        originals.forEach((n) => track.appendChild(n.cloneNode(true)));
-        safety++;
-      }
+  const state = tracks.map((track) => ({
+    el: track,
+    dir: Number(track.dataset.baseDir || 1), // Grid 1 = 1, Grid 2 = -1
+    x: 0,
+  }));
+
+  function tick() {
+    const scrollPos = window.scrollY;
+
+    for (const s of state) {
+      const loopW = s.el.__baseWidth || 1;
+      const target = scrollPos * MULTIPLIER * s.dir;
+
+      s.x = reduced ? target : s.x + (target - s.x) * EASE;
+      s.x = wrapNeg(s.x, loopW);
+
+      s.el.style.transform = `translate3d(${s.x}px,0,0)`;
     }
 
+    requestAnimationFrame(tick);
+  }
+
+  function rebuild() {
     tracks.forEach(ensureLoop);
 
-    const state = tracks.map((track) => ({
-      el: track,
-      dir: Number(track.dataset.baseDir || 1),
-      x: 0,
-    }));
-
-    function tick() {
-      const scrollPos = window.scrollY;
-
-      for (const s of state) {
-        // ✅ loopW correto: usa a largura do bloco base (não /2 do scrollWidth total)
-        const loopW = s.el.__baseWidth || (s.el.scrollWidth / 2) || 1;
-
-        const target = scrollPos * MULTIPLIER * s.dir;
-        s.x = reduced ? target : s.x + (target - s.x) * EASE;
-
-        s.x = wrapNeg(s.x, loopW);
-        s.el.style.transform = `translate3d(${s.x}px,0,0)`;
-      }
-
-      requestAnimationFrame(tick);
+    // mantém coerência após resize
+    for (const s of state) {
+      const loopW = s.el.__baseWidth || 1;
+      s.x = wrapNeg(s.x, loopW);
+      s.el.style.transform = `translate3d(${s.x}px,0,0)`;
     }
+  }
 
-    function rebuild() {
-      tracks.forEach(ensureLoop);
-      // mantém posição coerente após rebuild
-      for (const s of state) {
-        const loopW = s.el.__baseWidth || (s.el.scrollWidth / 2) || 1;
-        s.x = wrapNeg(s.x, loopW);
-        s.el.style.transform = `translate3d(${s.x}px,0,0)`;
-      }
-    }
+  window.addEventListener("resize", rebuild, { passive: true });
+  window.addEventListener("load", rebuild, { once: true });
 
-    window.addEventListener("resize", rebuild, { passive: true });
-    window.addEventListener("load", rebuild, { once: true });
-
-    rebuild();
-    requestAnimationFrame(tick);
-  })();
+  rebuild();
+  requestAnimationFrame(tick);
+})();
 
   /* ===================== GRID: DESABILITAR CLIQUE TOTAL ===================== */
   (function disableGridClick() {
@@ -710,3 +709,4 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   })();
 });
+
