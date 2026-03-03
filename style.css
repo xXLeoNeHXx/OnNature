@@ -211,23 +211,19 @@ body > header {
 .menu-toggle.open span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
 
 /* =========================================================
-   HERO (VÍDEO) — FIX DEFINITIVO ANDROID/CHROME
-   - usa dvh/svh (viewport dinâmico) para não “sobrar faixa”
-   - iframe 100% + scale (cover) evita qualquer letterbox em cima/baixo
-   - overlay sempre 100% e por cima
+   HERO (VÍDEO) — FIX ANDROID/CHROME (sem ficar menor)
 ========================================================= */
-.video-section {
+.video-section{
   position: relative;
   width: 100%;
   height: 95vh;      /* fallback */
-  height: 95svh;     /* viewport “small” (mais estável em mobile) */
-  height: 95dvh;     /* viewport dinâmico (Chrome Android) */
+  height: 95svh;
+  height: 95dvh;
   background: #0e0e0e;
   overflow: hidden;
 }
 
-/* container do vídeo sempre ocupando tudo */
-.video-container {
+.video-container{
   position: absolute;
   inset: 0;
   width: 100%;
@@ -237,25 +233,29 @@ body > header {
   z-index: 0;
 }
 
-/* ✅ método mais estável: ocupa 100% e “cover” via scale */
-.video-container iframe {
+/* ✅ “Cover” REAL para iframe do YouTube:
+   - width/height baseados em 16:9
+   - min-width/min-height garantem cobertura total
+*/
+.video-container iframe{
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
+  top: 50%;
+  left: 50%;
 
-  /* cobre sem faixas (corta laterais/um pouco de cima/baixo se preciso) */
-  transform: scale(1.22);
-  transform-origin: center center;
+  width: 100vw;
+  height: 56.25vw;          /* 100vw * 9/16 */
 
+  min-width: 177.777vh;     /* 100vh * 16/9 */
+  min-height: 100vh;
+
+  transform: translate(-50%, -50%);
   border: 0;
   pointer-events: none;
-
   z-index: 0;
 }
 
-/* overlay 100% sempre por cima */
-.video-overlay {
+/* overlay sempre por cima e do mesmo tamanho */
+.video-overlay{
   position: absolute;
   inset: 0;
   width: 100%;
@@ -271,6 +271,23 @@ body > header {
   background: rgba(0, 0, 0, 0.45);
   color: #fff;
   will-change: transform;
+}
+
+@media (max-width: 768px){
+  .video-section{
+    height: 50vh;
+    height: 50svh;
+    height: 50dvh;
+  }
+
+  /* Em telas 20:9 (Poco X6 Pro), aumenta um pouco o “recorte” lateral */
+  .video-container iframe{
+    width: 110vw;
+    height: 61.875vw;       /* 110vw * 9/16 */
+
+    min-width: 200vh;       /* um pouco mais agressivo no mobile */
+    min-height: 100vh;
+  }
 }
 
 /* Mobile */
@@ -1129,3 +1146,4 @@ footer {
 #sucesso-modal:target .modal-box {
   transform: translateY(0);
 }
+
