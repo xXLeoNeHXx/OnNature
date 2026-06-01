@@ -731,11 +731,16 @@ document.addEventListener("DOMContentLoaded", () => {
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
           body: encodeForm(targetForm),
         })
-          .then((response) => {
-            if (!response.ok) throw new Error("Resposta não OK do servidor.");
-            targetForm.reset();
-            openSucesso();
-          })
+      .then((response) => {
+  if (!response.ok) throw new Error("Resposta não OK do servidor.");
+
+  gtag('event', 'conversion', {
+    'send_to': 'AW-18188610156/okojCJ7YrrccEOzUgOFD'
+  });
+
+  targetForm.reset();
+  openSucesso();
+})
           .catch((error) => {
             console.error("Erro:", error);
             alert("Erro ao enviar. Tente novamente.");
