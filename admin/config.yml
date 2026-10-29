@@ -11,8 +11,8 @@
 
 backend:
   name: github
-  repo: xXLeoNeHHx/OnNature
-  branch: main
+  repo: xXLeoNeHXx/OnNature
+  branch: site-novo-blog-teste
   use_graphql: true
 
 media_folder: "assets/uploads"
