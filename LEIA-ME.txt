@@ -1,0 +1,8 @@
+ON NATURE — VERSÃO MULTIPÁGINA PARA TESTE
+
+Abra index.html no Visual Studio Code. Recomenda-se usar Live Server.
+Mantenha a pasta assets/ original no mesmo nível dos HTML. O assets.rar enviado foi incluído como backup.
+
+Páginas: index, quem-somos, valores, servicos, licenciamento-ambiental, gestao-de-residuos, educacao-ambiental, sustentabilidade, manejo-recuperacao, blog e orcamento.
+
+Antes da publicação, validar o formulário Netlify e substituir o domínio usado nos links canonical pelo domínio oficial, caso seja diferente.

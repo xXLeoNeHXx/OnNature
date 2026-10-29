@@ -103,54 +103,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  /* ===================== ÂNCORAS SEM HASH NA URL ✅ ===================== */
-  (function initAnchorScrollNoHash() {
-    // hashes que NÃO devem aparecer nunca na URL
-    const cleanHashes = new Set(["#topo", "#orcamento", "#sucesso-modal"]);
-
-    function handleAnchor(hash) {
-      const target = getAnchorTarget(hash);
-      if (!target) return false;
-
-      smoothScrollToTarget(target);
-      closeMobileMenu();
-
-      // Se for um hash “proibido”, garantimos limpar
-      if (cleanHashes.has(hash)) removeHashAfterBrowserUpdates();
-
-      // Mesmo para outros hashes, se você preferir NUNCA ter # na URL,
-      // descomente a linha abaixo:
-      // removeHashAfterBrowserUpdates();
-
-      return true;
-    }
-
-    // Intercepta clique em QUALQUER âncora (inclui logo)
-    document.addEventListener("click", (e) => {
-      const a = e.target.closest('a[href^="#"]');
-      if (!a) return;
-
-      const hash = a.getAttribute("href");
-      if (!hash || hash === "#") return;
-
-      e.preventDefault();
-      handleAnchor(hash);
-
-      // Se for topo/orçamento, não deixa o hash “grudar”
-      if (cleanHashes.has(hash)) removeHashAfterBrowserUpdates();
-    });
-
-    // Se algum hash proibido aparecer (colar URL, etc.), limpa
-    window.addEventListener("hashchange", () => {
-      if (cleanHashes.has(window.location.hash)) removeHashAfterBrowserUpdates();
-    });
-
-    // Se abriu a página já com hash proibido, rola e limpa
-    if (cleanHashes.has(window.location.hash)) {
-      handleAnchor(window.location.hash);
-      removeHashAfterBrowserUpdates();
-    }
-  })();
 
   /* ===================== BOTÃO TOPO ===================== */
   if (btnTopo) {
@@ -172,7 +124,6 @@ document.addEventListener("DOMContentLoaded", () => {
     btnTopo.addEventListener("click", () => {
       window.scrollTo({ top: 0, behavior: supportsSmoothScroll ? "smooth" : "auto" });
       // garante que não aparece #topo por nada
-      removeHashAfterBrowserUpdates();
     });
   }
 
@@ -495,45 +446,6 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("scroll", realign, { passive: true });
   })();
 
-  /* ===================== BLOG MODAL ===================== */
-  (function initBlogModal() {
-    const blogLink = document.getElementById("blog-link");
-    const modal = document.getElementById("blog-modal");
-    const closeBtn = document.getElementById("close-blog-modal");
-    if (!blogLink || !modal || !closeBtn) return;
-
-    function openModal() {
-      modal.classList.add("active");
-      modal.setAttribute("aria-hidden", "false");
-      document.body.style.overflow = "hidden";
-      closeBtn.focus?.();
-      removeHashAfterBrowserUpdates(); // garante URL limpa
-    }
-
-    function closeModal() {
-      modal.classList.remove("active");
-      modal.setAttribute("aria-hidden", "true");
-      document.body.style.overflow = "";
-      blogLink.focus?.();
-      removeHashAfterBrowserUpdates();
-    }
-
-    blogLink.addEventListener("click", (e) => {
-      e.preventDefault();
-      openModal();
-    });
-
-    closeBtn.addEventListener("click", closeModal);
-
-    modal.addEventListener("click", (e) => {
-      if (e.target === modal) closeModal();
-    });
-
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "Escape" && modal.classList.contains("active")) closeModal();
-    });
-  })();
-
   /* ===================== CLIENTES: INFINITO + CONTÍNUO + ARRASTAR ===================== */
   (function initClientsInfiniteMarquee() {
     const marquee = document.getElementById("clients-marquee");
@@ -701,14 +613,12 @@ document.addEventListener("DOMContentLoaded", () => {
       sucessoModal.setAttribute("aria-hidden", "false");
       document.body.style.overflow = "hidden";
       closeSucessoModal?.focus?.();
-      removeHashAfterBrowserUpdates();
     }
 
     function closeSucesso() {
       sucessoModal.classList.remove("active");
       sucessoModal.setAttribute("aria-hidden", "true");
       document.body.style.overflow = "";
-      removeHashAfterBrowserUpdates();
     }
 
     function encodeForm(formEl) {
@@ -760,9 +670,4 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   })();
 
-  /* ===================== LIMPEZA FINAL (se algo colocou hash) ===================== */
-  (function finalUrlCleanIfNeeded() {
-    const forbidden = new Set(["#topo", "#orcamento", "#sucesso-modal"]);
-    if (forbidden.has(window.location.hash)) removeHashAfterBrowserUpdates();
-  })();
 });

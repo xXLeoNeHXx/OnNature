@@ -1,0 +1,94 @@
+ON NATURE — PAINEL DO BLOG (DECAP CMS)
+==============================================
+
+O pacote já contém:
+- /admin/index.html
+- /admin/config.yml
+- /content/blog/ (onde os artigos ficam salvos)
+- /assets/uploads/ (onde as imagens enviadas pelo CMS ficam salvas)
+- fluxo editorial para rascunho -> revisão -> publicação
+
+IMPORTANTE — 1) INFORMAR O REPOSITÓRIO
+--------------------------------------
+Abra:
+  admin/config.yml
+
+O repositório já foi configurado como:
+  repo: xXLeoNeHHx/OnNature
+
+Branch:
+  main
+
+O nome exato não foi colocado automaticamente porque ele não está
+informado no arquivo ZIP recebido.
+
+2) COLOCAR O PROJETO NO GITHUB/NETLIFY
+--------------------------------------
+Suba estes arquivos para o mesmo repositório que o Netlify usa para
+publicar o site. Não crie um segundo site.
+
+3) AUTENTICAÇÃO DO GITHUB
+-------------------------
+O backend configurado é o GitHub. O Decap informa que, para esse backend,
+os usuários precisam ter acesso de escrita ao repositório e a autenticação
+precisa ser configurada.
+
+No Netlify, configure um provedor de autenticação GitHub para o site.
+A documentação atual do Decap orienta criar uma GitHub OAuth App e usar
+como callback:
+  https://api.netlify.com/auth/done
+
+Depois de configurar o provedor no Netlify, acesse:
+  https://SEU-DOMINIO.com/admin/
+
+4) COMO PUBLICAR UM ARTIGO
+--------------------------
+No painel:
+  Artigos do Blog -> Novo artigo
+
+Preencha:
+- Título
+- Resumo
+- Imagem de capa
+- Categoria
+- Data
+- SEO — título
+- SEO — descrição
+- Conteúdo
+
+Com "editorial_workflow" o artigo pode passar por rascunho/revisão antes
+da publicação.
+
+5) ONDE OS ARTIGOS FICAM SALVOS
+--------------------------------
+Os artigos são arquivos Markdown em:
+  content/blog/
+
+As imagens enviadas pelo painel ficam em:
+  assets/uploads/
+
+Ou seja, o conteúdo fica versionado no GitHub, não apenas no navegador.
+
+6) IMPORTANTE SOBRE O MODELO ATUAL DO BLOG
+------------------------------------------
+O visual do Blog da versão de teste continua no projeto. O CMS é a camada
+administrativa para armazenar/publicar conteúdo.
+
+A integração automática entre os arquivos Markdown e os cards/páginas
+gerados do Blog pode ser feita em uma segunda etapa. Neste pacote, o painel
+está pronto para armazenar os novos artigos com segurança no repositório.
+
+REFERÊNCIA
+----------
+Decap CMS — GitHub backend:
+https://decapcms.org/docs/github-backend/
+
+Decap CMS — configuração:
+https://decapcms.org/docs/configure-decap-cms/
+
+
+AJUSTE DE RODAPÉ
+-----------------
+As páginas individuais dos serviços receberam uma classe própria para manter
+o rodapé no final da janela quando o conteúdo da página for curto. As demais
+páginas não tiveram essa regra aplicada.

@@ -1,0 +1,11 @@
+PAINEL LOCAL DE TESTE — ON NATURE
+1. Extraia o ZIP em uma pasta.
+2. Abra o Prompt de Comando (cmd), não a janela Python com >>>.
+3. Navegue até a pasta extraída:
+   cd /d "CAMINHO\DA\PASTA"
+4. Inicie o servidor:
+   python -m http.server 8000
+5. Abra no navegador:
+   http://localhost:8000/admin-local/
+
+Este painel não usa GitHub/Netlify. Os artigos ficam no localStorage do navegador neste computador/perfil. Use Exportar backup para guardar uma cópia JSON. Não publica no site público.

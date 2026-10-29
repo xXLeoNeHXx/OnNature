@@ -1,0 +1,12 @@
+MODELO DE BLOG — ON NATURE
+
+Esta versão é um protótipo visual do futuro blog.
+
+Estrutura:
+- blog.html = página principal com destaque, cards e filtros.
+- blog-data.json = arquivo de dados/protótipo onde ficam título, categoria, data, resumo, imagem e slug.
+- blog/*.html = páginas individuais dos artigos, com URL própria e estrutura adequada para SEO.
+
+A ideia futura é substituir a manutenção por um fluxo simples de publicação, podendo usar o JSON como base ou conectar um CMS para publicar sem editar o código.
+
+Os textos desta versão são demonstrativos e devem ser revisados antes de publicação.

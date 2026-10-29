@@ -1,0 +1,69 @@
+# On Nature — Decap CMS
+# Antes de publicar no Netlify, substitua SEU_USUARIO/SEU_REPOSITORIO
+# pelo repositório GitHub que já está conectado ao seu site.
+#
+# Exemplo:
+# Repositório GitHub atual da On Nature
+#
+# O CMS salva os artigos no GitHub. O Netlify então faz o deploy do site.
+# A autenticação do GitHub precisa ser configurada no Netlify conforme as
+# instruções do LEIA-ME-CMS.txt.
+
+backend:
+  name: github
+  repo: xXLeoNeHHx/OnNature
+  branch: main
+  use_graphql: true
+
+media_folder: "assets/uploads"
+public_folder: "/assets/uploads"
+
+publish_mode: editorial_workflow
+
+collections:
+  - name: "blog"
+    label: "Artigos do Blog"
+    label_singular: "Artigo"
+    folder: "content/blog"
+    create: true
+    slug: "{{slug}}"
+    preview_path: "/blog/{{slug}}"
+    fields:
+      - label: "Título"
+        name: "title"
+        widget: "string"
+      - label: "Resumo"
+        name: "description"
+        widget: "text"
+      - label: "Imagem de capa"
+        name: "image"
+        widget: "image"
+        required: false
+      - label: "Categoria"
+        name: "category"
+        widget: "select"
+        options:
+          - "Licenciamento Ambiental"
+          - "CETESB"
+          - "IBAMA"
+          - "Gestão de Resíduos"
+          - "CADRI"
+          - "Sustentabilidade"
+          - "Legislação Ambiental"
+          - "Educação Ambiental"
+      - label: "Data de publicação"
+        name: "date"
+        widget: "datetime"
+        format: "YYYY-MM-DD"
+        time_format: false
+      - label: "SEO — título"
+        name: "seo_title"
+        widget: "string"
+        required: false
+      - label: "SEO — descrição"
+        name: "seo_description"
+        widget: "text"
+        required: false
+      - label: "Conteúdo"
+        name: "body"
+        widget: "markdown"

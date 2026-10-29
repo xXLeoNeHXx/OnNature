@@ -1,0 +1,36 @@
+{
+  "articles": [
+    {
+      "slug": "licenciamento-ambiental-guia-empresa",
+      "title": "Licenciamento ambiental: o que uma empresa precisa saber",
+      "category": "Licenciamento Ambiental",
+      "date": "2026-10-07",
+      "summary": "Entenda de forma prática por que o licenciamento ambiental pode fazer parte da rotina de uma empresa e quais pontos merecem atenção.",
+      "image": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80"
+    },
+    {
+      "slug": "gestao-de-residuos-na-pratica",
+      "title": "Gestão de resíduos na prática: por onde começar",
+      "category": "Gestão de Resíduos",
+      "date": "2026-10-02",
+      "summary": "Um roteiro simples para organizar a geração, segregação, armazenamento e destinação dos resíduos de uma empresa.",
+      "image": "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=1200&q=80"
+    },
+    {
+      "slug": "sustentabilidade-alem-do-discurso",
+      "title": "Sustentabilidade além do discurso: como transformar intenção em ação",
+      "category": "Sustentabilidade",
+      "date": "2026-09-25",
+      "summary": "Veja como pequenas decisões de gestão podem transformar sustentabilidade em uma prática integrada ao negócio.",
+      "image": "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?auto=format&fit=crop&w=1200&q=80"
+    },
+    {
+      "slug": "educacao-ambiental-nas-empresas",
+      "title": "Educação ambiental nas empresas: por que envolver as pessoas",
+      "category": "Educação Ambiental",
+      "date": "2026-09-18",
+      "summary": "Boas práticas ambientais dependem de processos, mas também das pessoas que executam as atividades todos os dias.",
+      "image": "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=1200&q=80"
+    }
+  ]
+}
