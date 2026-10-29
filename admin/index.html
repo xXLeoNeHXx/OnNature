@@ -1,11 +1,16 @@
 <!doctype html>
 <html lang="pt-BR">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>On Nature — Gerenciador de Conteúdo</title>
-</head>
-<body>
-  <script src="https://cdn.jsdelivr.net/npm/decap-cms@3/dist/decap-cms.js"></script>
-</body>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>On Nature — Gerenciador de Conteúdo</title>
+  </head>
+  <body>
+    <script>
+      if (window.location.hash.includes("recovery_token=")) {
+        window.location.pathname = "/admin/";
+      }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/decap-cms@3/dist/decap-cms.js"></script>
+  </body>
 </html>
