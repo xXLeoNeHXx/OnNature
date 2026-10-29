@@ -10,7 +10,7 @@
 # instruções do LEIA-ME-CMS.txt.
 
 backend:
-  name: github
+  name: git-gateway
   repo: xXLeoNeHXx/OnNature
   branch: site-novo-blog-teste
   use_graphql: true
