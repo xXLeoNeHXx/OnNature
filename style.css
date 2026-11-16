@@ -1636,7 +1636,7 @@ footer {
 }
 @keyframes serviceDotGlow {
   0%, 100% { box-shadow: 0 0 0 0 currentColor; }
-  50% { box-shadow: 0 0 6px 2px currentColor; }
+  50% { box-shadow: 0 0 3px 1px currentColor; }
 }
 
 /* CTA inferior: bege/roxo e branco/roxo com inversão completa no hover */
