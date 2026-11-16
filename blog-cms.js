@@ -89,7 +89,7 @@
   async function resolveContentBranch() {
     // Em Deploy Previews do Netlify, consulta a branch de origem do PR para
     // permitir pré-visualizar artigos ainda não mesclados no branch de teste.
-    const preview = location.hostname.match(/^deploy-preview-(\\d+)--/i);
+    const preview = location.hostname.match(/^deploy-preview-(\d+)--/i);
     if (!preview) return BRANCH;
 
     try {
