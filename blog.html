@@ -39,252 +39,40 @@
 <script defer src="script.js?v=20261007-2"></script>
 
 <script>
-(async function () {
-  const REPO = "xXLeoNeHXx/OnNature";
-  const BRANCH = "site-novo-blog-teste";
-  const API = `https://api.github.com/repos/${REPO}/contents/content/blog?ref=${BRANCH}`;
-
-  const grid = document.querySelector(".blog-grid-modern");
-  if (!grid) return;
-
-  function escapeHTML(value) {
-    return String(value || "").replace(/[&<>"']/g, c => ({
-      "&": "&amp;", "<": "&lt;", ">": "&gt;",
-      '"': "&quot;", "'": "&#39;"
-    })[c]);
-  }
-
-  function parseArticle(text, filename) {
-    const match = text.match(/^---\s*\n([\s\S]*?)\n---\s*\n?([\s\S]*)$/);
-    if (!match) return null;
-
-    const data = {};
-    match[1].split(/\r?\n/).forEach(line => {
-      const field = line.match(/^([a-zA-Z_]+):\s*(.*)$/);
-      if (field) {
-        data[field[1]] = field[2].trim().replace(/^["']|["']$/g, "");
-      }
-    });
-
-    return {
-      slug: filename.replace(/\.md$/i, ""),
-      title: data.title || "Artigo ambiental",
-      description: data.description || "",
-      image: data.image || "",
-      category: data.category || "Outros",
-      date: data.date || "",
-      seo_title: data.seo_title || "",
-      seo_description: data.seo_description || "",
-      body: match[2]
-    };
-  }
-
-  function imageURL(path) {
-    if (!path) return "";
-    try {
-      return new URL(path, location.origin).href;
-    } catch {
-      return "";
-    }
-  }
-
-  function formatDate(date) {
-    if (!date) return "";
-    const parts = date.substring(0, 10).split("-");
-    if (parts.length !== 3) return date;
-    return `${parts[2]}/${parts[1]}/${parts[0]}`;
-  }
-
-  function createCard(article) {
-    const card = document.createElement("article");
-    card.className = "blog-card-modern";
-    card.dataset.category = article.category;
-    card.dataset.cms = "true";
-
-    const image = imageURL(article.image);
-
-    card.innerHTML = `
-      <a href="blog.html?artigo=${encodeURIComponent(article.slug)}">
-        ${image
-          ? `<img src="${escapeHTML(image)}" alt="${escapeHTML(article.title)}" loading="lazy">`
-          : ""}
-        <div class="blog-card-modern__body">
-          <span class="blog-category">${escapeHTML(article.category)}</span>
-          <h2>${escapeHTML(article.title)}</h2>
-          <p>${escapeHTML(article.description)}</p>
-          <small>${escapeHTML(formatDate(article.date))}</small>
-          <span class="blog-card-link">Ler artigo →</span>
-        </div>
-      </a>
-    `;
-
-    return card;
-  }
-
-  async function getArticles() {
-    const response = await fetch(API);
-
-    if (!response.ok) {
-      throw new Error("Não foi possível consultar os artigos do CMS.");
-    }
-
-    const files = await response.json();
-
-    const markdownFiles = files.filter(file =>
-      file.type === "file" && file.name.toLowerCase().endsWith(".md")
-    );
-
-    const results = await Promise.all(
-      markdownFiles.map(async file => {
-        const response = await fetch(file.download_url);
-        if (!response.ok) return null;
-
-        const text = await response.text();
-        return parseArticle(text, file.name);
-      })
-    );
-
-    return results.filter(Boolean).sort((a, b) =>
-      b.date.localeCompare(a.date)
-    );
-  }
-
-  function setupFilters() {
-    document.querySelectorAll(".blog-filter").forEach(button => {
-      button.addEventListener("click", () => {
-        document.querySelectorAll(".blog-filter").forEach(item =>
-          item.classList.remove("active")
-        );
-
-        button.classList.add("active");
-
-        const filter = button.dataset.filter;
-
-        document.querySelectorAll(".blog-card-modern").forEach(card => {
-          card.hidden =
-            filter !== "Todos" && card.dataset.category !== filter;
-        });
-      });
-    });
-  }
-
-  async function showArticle(slug, articles) {
-    const article = articles.find(item => item.slug === slug);
-    if (!article) return;
-
-    const response = await fetch(
-      `https://raw.githubusercontent.com/${REPO}/${BRANCH}/content/blog/${encodeURIComponent(slug)}.md`
-    );
-
-    if (!response.ok) return;
-
-    const text = await response.text();
-    const fullArticle = parseArticle(text, slug + ".md");
-    if (!fullArticle) return;
-
-    const main = document.querySelector(".blog-page");
-    const image = imageURL(fullArticle.image);
-
-    main.innerHTML = `
-      <article class="cms-article">
-        <a href="blog.html" class="blog-read-more">← Voltar ao blog</a>
-        <span class="blog-category">${escapeHTML(fullArticle.category)}</span>
-        <h1>${escapeHTML(fullArticle.title)}</h1>
-        <p class="cms-article-date">${escapeHTML(formatDate(fullArticle.date))}</p>
-        ${image ? `<img class="cms-article-cover" src="${escapeHTML(image)}" alt="${escapeHTML(fullArticle.title)}">` : ""}
-        <p class="cms-article-description">${escapeHTML(fullArticle.description)}</p>
-        <div id="cms-article-content"></div>
-      </article>
-    `;
-
-    const style = document.createElement("style");
-    style.textContent = `
-      .cms-article {
-        max-width: 900px;
-        margin: 50px auto;
-        padding: 20px;
-        color: #303746;
-      }
-      .cms-article h1 {
-        font-size: clamp(30px, 5vw, 46px);
-        line-height: 1.2;
-        margin: 20px 0;
-      }
-      .cms-article-cover {
-        display: block;
-        width: 100%;
-        max-height: 500px;
-        object-fit: cover;
-        border-radius: 16px;
-        margin: 25px 0;
-      }
-      .cms-article-date { color: #777; }
-      .cms-article-description {
-        font-size: 19px;
-        line-height: 1.7;
-      }
-      #cms-article-content {
-        font-size: 17px;
-        line-height: 1.85;
-        margin-top: 30px;
-      }
-      #cms-article-content img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 12px;
-      }
-    `;
-    document.head.appendChild(style);
-
-    const loadScript = src => new Promise((resolve, reject) => {
-      const script = document.createElement("script");
-      script.src = src;
-      script.onload = resolve;
-      script.onerror = reject;
-      document.head.appendChild(script);
-    });
-
-    try {
-      await loadScript("https://cdn.jsdelivr.net/npm/marked/marked.min.js");
-      await loadScript("https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js");
-
-      const html = marked.parse(fullArticle.body || "");
-      document.getElementById("cms-article-content").innerHTML =
-        DOMPurify.sanitize(html);
-
-      document.title =
-        fullArticle.seo_title || fullArticle.title + " | On Nature";
-
-      const description = document.querySelector('meta[name="description"]');
-      if (description) {
-        description.content =
-          fullArticle.seo_description || fullArticle.description;
-      }
-    } catch (error) {
-      document.getElementById("cms-article-content").textContent =
-        "Não foi possível carregar o conteúdo deste artigo.";
-      console.error(error);
-    }
-  }
-
-  try {
-    const articles = await getArticles();
-    const slug = new URLSearchParams(location.search).get("artigo");
-
-    if (slug) {
-      await showArticle(slug, articles);
-      return;
-    }
-
-    articles.forEach(article => {
-      grid.appendChild(createCard(article));
-    });
-
-    setupFilters();
-
-  } catch (error) {
-    console.error("Erro ao carregar artigos do CMS:", error);
-  }
+(async()=>{
+const repo="xXLeoNeHXx/OnNature", branch="site-novo-blog-teste";
+const api=`https://api.github.com/repos/${repo}/contents/content/blog?ref=${branch}`;
+const raw=`https://raw.githubusercontent.com/${repo}/${branch}/content/blog/`;
+const grid=document.querySelector(".blog-grid-modern"), main=document.querySelector(".blog-page");
+if(!grid||!main)return;
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function parse(src,name){
+ const m=src.match(/^---\s*\r?\n([\s\S]*?)\r?\n---\s*\r?\n?([\s\S]*)$/);if(!m)return null;
+ const d={};m[1].split(/\r?\n/).forEach(line=>{const x=line.match(/^([a-zA-Z_]+):\s*(.*)$/);if(x)d[x[1]]=x[2].trim().replace(/^["']|["']$/g,"")});
+ return {slug:name.replace(/\.md$/i,""),title:d.title||"Artigo ambiental",description:d.description||"",image:d.image||"",category:d.category||"Outros",date:(d.date||"").slice(0,10),seo_title:d.seo_title||"",seo_description:d.seo_description||"",body:m[2]||""};
+}
+function img(path){if(!path)return"";if(/^https?:\/\//i.test(path))return path;return new URL(path.replace(/^\.\//,"").replace(/^\//,""),location.origin+"/").href}
+function date(v){const p=(v||"").slice(0,10).split("-");return p.length===3?p.reverse().join("/"):v||""}
+function card(a){const el=document.createElement("article");el.className="blog-card-modern";el.dataset.category=a.category;el.dataset.cms="true";const image=img(a.image);el.innerHTML=`<a href="blog.html?artigo=${encodeURIComponent(a.slug)}">${image?`<img src="${esc(image)}" alt="${esc(a.title)}" loading="lazy" onerror="this.hidden=true">`:""}<div class="blog-card-modern__body"><span class="blog-category">${esc(a.category)}</span><h2>${esc(a.title)}</h2><p>${esc(a.description)}</p><small>${esc(date(a.date))}</small><span class="blog-card-link">Ler artigo →</span></div></a>`;return el}
+function filters(){document.querySelectorAll(".blog-filter").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".blog-filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.querySelectorAll(".blog-card-modern").forEach(c=>c.hidden=b.dataset.filter!=="Todos"&&c.dataset.category!==b.dataset.filter)}))}
+try{
+ const response=await fetch(api);if(!response.ok)throw Error("Falha ao consultar artigos");const files=await response.json();
+ const articles=(await Promise.all(files.filter(f=>f.type==="file"&&f.name.endsWith(".md")).map(async f=>{const r=await fetch(f.download_url);return r.ok?parse(await r.text(),f.name):null}))).filter(Boolean).sort((a,b)=>b.date.localeCompare(a.date));
+ const slug=new URLSearchParams(location.search).get("artigo");
+ if(slug){
+  const a=articles.find(x=>x.slug===slug);if(!a){main.innerHTML='<p>Artigo não encontrado. <a href="blog.html">Voltar ao blog</a></p>';return}
+  const r=await fetch(raw+encodeURIComponent(slug)+".md");if(!r.ok)throw Error("Falha ao abrir artigo");const full=parse(await r.text(),slug+".md");
+  let body=full.body.replace(/^\s*#\s+([^\n]+)\s*\n+/,(all,h)=>h.trim().toLowerCase()===full.title.trim().toLowerCase()?"":all);
+  main.innerHTML=`<article class="cms-article"><a href="blog.html" class="blog-read-more">← Voltar ao blog</a><span class="blog-category">${esc(full.category)}</span><h1>${esc(full.title)}</h1><p class="cms-article-date">${esc(date(full.date))}</p>${full.image?`<img class="cms-article-cover" src="${esc(img(full.image))}" alt="${esc(full.title)}" onerror="this.hidden=true">`:""}${full.description?`<p class="cms-article-description">${esc(full.description)}</p>`:""}<div id="cms-article-content"></div></article>`;
+  const s=document.createElement("style");s.textContent=".cms-article{max-width:900px;margin:50px auto;padding:20px;color:#303746}.cms-article h1{font-size:clamp(30px,5vw,46px);line-height:1.2;margin:20px 0}.cms-article-cover{display:block;width:100%;max-height:500px;object-fit:cover;border-radius:16px;margin:25px 0}.cms-article-date{color:#777}.cms-article-description{font-size:19px;line-height:1.7}#cms-article-content{font-size:17px;line-height:1.85;margin-top:30px}#cms-article-content img{max-width:100%;height:auto;border-radius:12px}";document.head.appendChild(s);
+  const marked=await fetch("https://cdn.jsdelivr.net/npm/marked/marked.min.js").then(x=>x.text()),purify=await fetch("https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js").then(x=>x.text());
+  for(const src of [marked,purify]){const tag=document.createElement("script");tag.textContent=src;document.head.appendChild(tag)}
+  document.getElementById("cms-article-content").innerHTML=window.DOMPurify.sanitize(window.marked.parse(body));
+  document.title=full.seo_title||full.title+" | On Nature";const meta=document.querySelector('meta[name="description"]');if(meta)meta.content=full.seo_description||full.description;return;
+ }
+ const present=new Set(Array.from(grid.querySelectorAll('a[href*="artigo="]')).map(a=>new URL(a.href).searchParams.get("artigo")));
+ articles.forEach(a=>{if(!present.has(a.slug))grid.appendChild(card(a))});filters();
+}catch(e){console.error("CMS blog:",e)}
 })();
 </script>
 </body>
