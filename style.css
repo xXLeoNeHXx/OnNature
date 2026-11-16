@@ -1469,3 +1469,28 @@ footer {
   margin: 0 0 1.5rem;
   line-height: 1.5;
 }
+
+
+/* BLOG — hierarquia e retornos padronizados nos artigos */
+.article-page .article-back--top {
+  display: block;
+  width: max-content;
+  margin: 0 0 1.5rem;
+  line-height: 1.5;
+}
+
+.article-page article > .blog-category {
+  display: block;
+  margin: 0 0 .7rem;
+}
+
+.article-page .article-back--bottom {
+  display: block;
+  width: max-content;
+  margin: 2.5rem 0 0;
+  line-height: 1.5;
+}
+
+.blog-grid-modern .blog-card-modern[hidden] {
+  display: none !important;
+}
