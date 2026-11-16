@@ -86,8 +86,34 @@
     return parts.length === 3 ? parts.reverse().join("/") : String(value);
   }
 
+  async function resolveContentBranch() {
+    // Em Deploy Previews do Netlify, consulta a branch de origem do PR para
+    // permitir pré-visualizar artigos ainda não mesclados no branch de teste.
+    const preview = location.hostname.match(/^deploy-preview-(\\d+)--/i);
+    if (!preview) return BRANCH;
+
+    try {
+      const prResponse = await fetch(
+        "https://api.github.com/repos/" + REPOSITORY + "/pulls/" + preview[1],
+        { headers: { Accept: "application/vnd.github+json" }, cache: "no-store" }
+      );
+      if (!prResponse.ok) return BRANCH;
+      const pullRequest = await prResponse.json();
+      if (pullRequest.base && pullRequest.base.ref === BRANCH &&
+          pullRequest.head && pullRequest.head.ref) {
+        return pullRequest.head.ref;
+      }
+    } catch (error) {
+      console.warn("Não foi possível identificar a branch do Deploy Preview; usando o branch de teste.", error);
+    }
+    return BRANCH;
+  }
+
   async function fetchPublishedArticles() {
-    const response = await fetch(CONTENTS_API, {
+    const contentBranch = await resolveContentBranch();
+    const contentsApi = "https://api.github.com/repos/" + REPOSITORY +
+      "/contents/content/blog?ref=" + encodeURIComponent(contentBranch);
+    const response = await fetch(contentsApi, {
       headers: { Accept: "application/vnd.github+json" },
       cache: "no-store"
     });
