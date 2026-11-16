@@ -396,6 +396,11 @@
 
   init().catch(error => {
     console.error("Erro ao carregar o blog do CMS:", error);
+
+    // Mesmo se a API do CMS estiver indisponível, os artigos estáticos
+    // continuam filtráveis. Não deixar os filtros dependerem do fetch.
+    applyFilters([]);
+
     const notice = document.createElement("p");
     notice.className = "blog-cms-notice";
     notice.textContent = "Não foi possível atualizar os artigos agora. Os conteúdos já disponíveis continuam acessíveis.";
