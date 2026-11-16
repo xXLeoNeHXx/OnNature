@@ -178,24 +178,35 @@
     return card;
   }
 
+  function normalizeCategory(value) {
+    return String(value || "")
+      .normalize("NFD")
+      .replace(/[\\u0300-\\u036f]/g, "")
+      .trim()
+      .toLocaleLowerCase("pt-BR");
+  }
+
   function applyFilters(posts = []) {
     const filters = document.querySelector(".blog-filters");
     if (!filters) return;
 
-    // Monta as opções a partir das categorias realmente presentes nos artigos
-    // (incluindo os artigos já existentes no HTML e os carregados pelo CMS).
-    const categories = new Set();
+    const categories = new Map();
     grid.querySelectorAll(".blog-card-modern[data-category]").forEach(card => {
       const category = String(card.dataset.category || "").trim();
-      if (category) categories.add(category);
+      if (category) categories.set(normalizeCategory(category), category);
     });
     posts.forEach(post => {
       const category = String(post.category || "").trim();
-      if (category) categories.add(category);
+      if (category) categories.set(normalizeCategory(category), category);
     });
 
+    // Garante a disponibilidade de todas as classificações editoriais,
+    // mesmo quando um artigo estiver temporariamente ausente da listagem.
+    ["Educação Ambiental", "Gestão de Resíduos", "Licenciamento Ambiental", "Sustentabilidade"]
+      .forEach(category => categories.set(normalizeCategory(category), category));
+
     filters.replaceChildren();
-    const options = ["Todos", ...Array.from(categories).sort((a, b) =>
+    const options = ["Todos", ...Array.from(categories.values()).sort((a, b) =>
       a.localeCompare(b, "pt-BR")
     )];
 
@@ -204,22 +215,26 @@
       button.type = "button";
       button.className = "blog-filter" + (category === "Todos" ? " active" : "");
       button.dataset.filter = category;
-      button.textContent = category === "Licenciamento Ambiental"
-        ? "Licenciamento"
-        : category === "Gestão de Resíduos"
-          ? "Resíduos"
-          : category;
-      button.addEventListener("click", () => {
-        filters.querySelectorAll(".blog-filter").forEach(item => {
-          item.classList.toggle("active", item === button);
-        });
-        grid.querySelectorAll(".blog-card-modern").forEach(card => {
-          const matches = category === "Todos" || card.dataset.category === category;
-          card.hidden = !matches;
-        });
-      });
+      button.textContent = category === "Licenciamento Ambiental" ? "Licenciamento"
+        : category === "Gestão de Resíduos" ? "Resíduos" : category;
       filters.appendChild(button);
     });
+
+    // Delegação de evento evita perder o funcionamento quando os filtros
+    // são recriados dinamicamente pelo CMS.
+    filters.onclick = event => {
+      const button = event.target.closest(".blog-filter");
+      if (!button || !filters.contains(button)) return;
+      const selected = normalizeCategory(button.dataset.filter);
+      filters.querySelectorAll(".blog-filter").forEach(item => {
+        item.classList.toggle("active", item === button);
+      });
+      grid.querySelectorAll(".blog-card-modern").forEach(card => {
+        const matches = selected === "todos" ||
+          normalizeCategory(card.dataset.category) === selected;
+        card.hidden = !matches;
+      });
+    };
   }
 
   function removeDuplicateTitle(markdown, title) {
@@ -251,8 +266,9 @@
     style.id = "cms-article-styles";
     style.textContent = [
       ".cms-article{width:min(900px,100%);margin:0 auto;padding:3.5rem 1rem 4rem;color:var(--header,#303746)}",
-      ".cms-article > .blog-read-more{display:inline-block;margin:0 0 1.6rem;line-height:1.5}",
+      ".cms-article > .blog-read-more{display:block;width:max-content;margin:0 0 1.6rem;line-height:1.5}",
       ".cms-article > .blog-category{display:block;margin:0 0 .7rem}",
+      ".cms-article > .blog-read-more--bottom{margin:2.5rem 0 0}",
       ".cms-article h1{font-size:clamp(2rem,4.2vw,3.1rem);line-height:1.14;margin:1.1rem 0 .8rem;color:var(--header)}",
       ".cms-article .cms-article-date{color:#777;margin:0 0 1.5rem}",
       ".cms-article .cms-article-cover{display:block;width:100%;max-height:520px;object-fit:cover;border-radius:18px;margin:1.5rem 0 2rem}",
@@ -306,6 +322,12 @@
     body.className = "cms-article-body";
     body.innerHTML = renderMarkdown(removeDuplicateTitle(fullPost.body, fullPost.title));
     article.appendChild(body);
+
+    const bottomBack = document.createElement("a");
+    bottomBack.href = "blog.html#ultimos-conteudos";
+    bottomBack.className = "blog-read-more blog-read-more--bottom";
+    bottomBack.textContent = "← Voltar aos artigos";
+    article.appendChild(bottomBack);
 
     page.replaceChildren(article);
     addArticleStyles();
