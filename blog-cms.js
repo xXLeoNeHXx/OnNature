@@ -174,13 +174,12 @@
 
   function normalizeEscapedMarkdown(markdown) {
     return String(markdown ?? "")
-      .replace(/^\\(#{1,6}\\s)/gm, "$1")
-      .replace(/^\\([-*+]\\s)/gm, "$1")
-      .replace(/^\\(\\d+\\.\\s)/gm, "$1")
-      .replace(/\\\\\\*\\\\\\*(.+?)\\\\\\*\\\\\\*/g, "**$1**")
-      .replace(/\\\\\\*(.+?)\\\\\\*/g, "*$1*");
+      .replace(/^\\(#{1,6}\s)/gm, "$1")
+      .replace(/^\\([-*+]\s)/gm, "$1")
+      .replace(/^\\(\d+\.\s)/gm, "$1")
+      .replace(/\\\*\\\*(.+?)\\\*\\\*/g, "**$1**")
+      .replace(/\\\*(.+?)\\\*/g, "*$1*");
   }
-
   function renderMarkdown(markdown) {
     if (!window.marked || !window.DOMPurify) {
       throw new Error("As bibliotecas de formatação do artigo não foram carregadas.");
