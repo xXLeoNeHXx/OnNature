@@ -66,5 +66,7 @@ collections:
         required: false
       - label: "Conteúdo"
         name: "body"
-        widget: "markdown"
-        hint: "Use o modo Markdown para formatar títulos (#, ##), listas (-) e negrito (**texto**)."
+        widget: "richtext"
+        modes:
+          - "raw"
+        hint: "Escreva em Markdown: use # ou ## para títulos, - para listas e **texto** para negrito."
