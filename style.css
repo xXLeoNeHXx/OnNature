@@ -644,16 +644,22 @@ body > header {
   position: relative;
   border-radius: 18px;
   overflow: hidden;
-  background: #fff;
-  border: 2px solid rgba(61, 61, 82, 0.14);
+  background: transparent;
+  border: 0;
   box-shadow: 0 10px 26px rgba(0, 0, 0, 0.12);
 }
 
 .servico-visual img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
+  max-width: none;
   object-fit: cover;
+  object-position: center;
   display: block;
+  margin: 0;
+  border: 0;
   transition: filter 350ms ease, transform 350ms ease;
   will-change: filter, transform;
 }
