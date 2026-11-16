@@ -1509,3 +1509,27 @@ footer {
 .service-details li { padding-left: .25rem; margin: .35rem 0; }
 .service-details__note { border-left: 3px solid var(--header); background: rgba(255,255,255,.55); padding: 1rem 1.2rem; border-radius: 0 10px 10px 0; font-size: .94rem; }
 @media(max-width:640px) { .service-details__grid { grid-template-columns: 1fr; } .service-page__content { padding: 1.3rem; } }
+
+
+/* Botão de orçamento nas páginas de serviços: mesmo visual do menu superior */
+.page-actions .cta-btn {
+  display: inline-block;
+  background-color: var(--texto-header);
+  color: var(--header);
+  border: 1px solid transparent;
+  padding: 0.3rem 1.1rem;
+  border-radius: 12px;
+  font-weight: 700;
+  text-decoration: none !important;
+  transition: background 0.3s, color 0.3s, transform 0.2s, border 0.3s;
+}
+.page-actions .cta-btn:hover {
+  background-color: var(--header);
+  color: var(--texto-header);
+  border: 1px solid var(--texto-header);
+  box-shadow: 0 0 0 1px var(--texto-header);
+  transform: scale(1.05);
+}
+@media (max-width: 768px) {
+  .page-actions .cta-btn { width: 100%; text-align: center; }
+}
