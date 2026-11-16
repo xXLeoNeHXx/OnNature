@@ -181,13 +181,14 @@
   function normalizeCategory(value) {
     return String(value || "")
       .normalize("NFD")
-      .replace(/[\\u0300-\\u036f]/g, "")
+      .replace(/[\u0300-\u036f]/g, "")
       .trim()
       .toLocaleLowerCase("pt-BR");
   }
 
   function applyFilters(posts = []) {
     const filters = document.querySelector(".blog-filters");
+    const featured = document.querySelector(".blog-featured");
     if (!filters) return;
 
     const categories = new Map();
@@ -199,9 +200,6 @@
       const category = String(post.category || "").trim();
       if (category) categories.set(normalizeCategory(category), category);
     });
-
-    // Garante a disponibilidade de todas as classificações editoriais,
-    // mesmo quando um artigo estiver temporariamente ausente da listagem.
     ["Educação Ambiental", "Gestão de Resíduos", "Licenciamento Ambiental", "Sustentabilidade"]
       .forEach(category => categories.set(normalizeCategory(category), category));
 
@@ -210,31 +208,42 @@
       a.localeCompare(b, "pt-BR")
     )];
 
-    options.forEach(category => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "blog-filter" + (category === "Todos" ? " active" : "");
-      button.dataset.filter = category;
-      button.textContent = category === "Licenciamento Ambiental" ? "Licenciamento"
-        : category === "Gestão de Resíduos" ? "Resíduos" : category;
-      filters.appendChild(button);
-    });
-
-    // Delegação de evento evita perder o funcionamento quando os filtros
-    // são recriados dinamicamente pelo CMS.
-    filters.onclick = event => {
-      const button = event.target.closest(".blog-filter");
-      if (!button || !filters.contains(button)) return;
-      const selected = normalizeCategory(button.dataset.filter);
-      filters.querySelectorAll(".blog-filter").forEach(item => {
-        item.classList.toggle("active", item === button);
+    function selectCategory(category) {
+      const selected = normalizeCategory(category);
+      filters.querySelectorAll(".blog-filter").forEach(button => {
+        button.classList.toggle("active", normalizeCategory(button.dataset.filter) === selected);
       });
+
       grid.querySelectorAll(".blog-card-modern").forEach(card => {
         const matches = selected === "todos" ||
           normalizeCategory(card.dataset.category) === selected;
-        card.hidden = !matches;
+        card.style.display = matches ? "" : "none";
+        card.setAttribute("aria-hidden", matches ? "false" : "true");
       });
-    };
+
+      if (featured) {
+        const featuredCategory = normalizeCategory(
+          featured.dataset.category ||
+          featured.querySelector(".blog-featured__content .blog-category")?.textContent
+        );
+        const matches = selected === "todos" || featuredCategory === selected;
+        featured.style.display = matches ? "" : "none";
+        featured.setAttribute("aria-hidden", matches ? "false" : "true");
+      }
+    }
+
+    options.forEach(category => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "blog-filter";
+      button.dataset.filter = category;
+      button.textContent = category === "Licenciamento Ambiental" ? "Licenciamento"
+        : category === "Gestão de Resíduos" ? "Resíduos" : category;
+      button.addEventListener("click", () => selectCategory(category));
+      filters.appendChild(button);
+    });
+
+    selectCategory("Todos");
   }
 
   function removeDuplicateTitle(markdown, title) {
