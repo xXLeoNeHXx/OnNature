@@ -1531,3 +1531,30 @@ footer {
 @media (max-width: 768px) {
   .page-actions .cta-btn { width: 100%; text-align: center; }
 }
+
+
+/* Ajuste de paleta nas páginas individuais de serviços */
+.service-page {
+  background-color: #eee4dc;
+}
+.service-page__content {
+  background: #ffffff;
+}
+
+/* Botões das páginas de serviços: roxo institucional */
+.page-actions .cta-btn,
+.page-actions .btn-animado {
+  background-color: #3d3d52;
+  color: #ffffff;
+  border: 1px solid #3d3d52;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+.page-actions .cta-btn:hover,
+.page-actions .btn-animado:hover {
+  background-color: #eee4dc;
+  color: #3d3d52;
+  border-color: #3d3d52;
+}
+.page-actions .btn-animado::after {
+  display: none;
+}
