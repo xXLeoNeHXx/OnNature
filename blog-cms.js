@@ -46,6 +46,8 @@
 
     return {
       slug: filename.replace(/\.md$/i, ""),
+      fileName: filename,
+      downloadUrl: "",
       title: String(fields.title ?? "").trim(),
       description: String(fields.description ?? "").trim(),
       image: String(fields.image ?? "").trim(),
@@ -102,7 +104,9 @@
       try {
         const articleResponse = await fetch(file.download_url, { cache: "no-store" });
         if (!articleResponse.ok) return null;
-        return parseFrontMatter(await articleResponse.text(), file.name);
+        const post = parseFrontMatter(await articleResponse.text(), file.name);
+        if (post) post.downloadUrl = file.download_url;
+        return post;
       } catch (error) {
         console.warn("Não foi possível carregar o artigo:", file.name, error);
         return null;
@@ -289,7 +293,9 @@
 
       const fragment = document.createDocumentFragment();
       posts.forEach(post => {
-        if (!grid.querySelector('[data-cms-slug="' + CSS.escape(post.slug) + '"]')) {
+        const alreadyExists = Array.from(grid.querySelectorAll("[data-cms-slug]"))
+        .some(card => card.dataset.cmsSlug === post.slug);
+      if (!alreadyExists) {
           fragment.appendChild(makeCard(post));
         }
       });
