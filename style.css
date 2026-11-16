@@ -1452,3 +1452,20 @@ footer {
     flex-wrap: nowrap;
   }
 }
+
+
+/* BLOG — padronização das datas dos cards e do retorno ao índice */
+.blog-card-modern__body .blog-card-date,
+.blog-card-modern__body > small {
+  display: block;
+  margin: .35rem 0 .65rem;
+  color: #777;
+  font-size: .82rem;
+  line-height: 1.4;
+}
+
+.article-back--top {
+  display: inline-block;
+  margin: 0 0 1.5rem;
+  line-height: 1.5;
+}
