@@ -38,61 +38,9 @@
 <a class="btn-whatsapp" href="https://wa.me/5511941848586" target="_blank" rel="noopener noreferrer" title="Entre em contato" aria-label="WhatsApp"><img src="assets/whatsapp-social-media-svgrepo-com.svg" alt="WhatsApp" loading="lazy"></a>
 <script defer src="script.js?v=20261007-2"></script>
 
-<script>
-(async()=>{
-const repo="xXLeoNeHXx/OnNature", branch="site-novo-blog-teste";
-const api=`https://api.github.com/repos/${repo}/contents/content/blog?ref=${branch}`;
-const raw=`https://raw.githubusercontent.com/${repo}/${branch}/content/blog/`;
-const grid=document.querySelector(".blog-grid-modern"), main=document.querySelector(".blog-page");
-if(!grid||!main)return;
-const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-function parse(src,name){
- const m=src.match(/^---\s*\r?\n([\s\S]*?)\r?\n---\s*\r?\n?([\s\S]*)$/);if(!m)return null;
- const d={};m[1].split(/\r?\n/).forEach(line=>{const x=line.match(/^([a-zA-Z_]+):\s*(.*)$/);if(x)d[x[1]]=x[2].trim().replace(/^["']|["']$/g,"")});
- return {slug:name.replace(/\.md$/i,""),title:d.title||"Artigo ambiental",description:d.description||"",image:d.image||"",category:d.category||"Outros",date:(d.date||"").slice(0,10),seo_title:d.seo_title||"",seo_description:d.seo_description||"",body:m[2]||""};
-}
-function fallbackImage(category){
- const key=(category||"").toLowerCase();
- if(key.includes("resíduo"))return "https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=900&q=80";
- if(key.includes("sustentabilidade"))return "https://images.unsplash.com/photo-1497435334941-8c899ee9e8e9?auto=format&fit=crop&w=900&q=80";
- if(key.includes("educação"))return "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=900&q=80";
- return "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=900&q=80";
-}
-function img(path){if(!path)return"";if(/^https?:\/\//i.test(path))return path;return new URL(path.replace(/^\.\//,"").replace(/^\//,""),location.origin+"/").href}
-function date(v){const p=(v||"").slice(0,10).split("-");return p.length===3?p.reverse().join("/"):v||""}
-function card(a){const el=document.createElement("article");el.className="blog-card-modern";el.dataset.category=a.category;el.dataset.cms="true";const image=img(a.image)||fallbackImage(a.category);el.innerHTML=`<a href="blog.html?artigo=${encodeURIComponent(a.slug)}">${image?`<img src="${esc(image)}" alt="${esc(a.title)}" loading="lazy" onerror="this.hidden=true">`:""}<div class="blog-card-modern__body"><span class="blog-category">${esc(a.category)}</span><h2>${esc(a.title)}</h2><p>${esc(a.description)}</p><small>${esc(date(a.date))}</small><span class="blog-card-link">Ler artigo →</span></div></a>`;return el}
-function filters(){document.querySelectorAll(".blog-filter").forEach(b=>b.addEventListener("click",()=>{document.querySelectorAll(".blog-filter").forEach(x=>x.classList.remove("active"));b.classList.add("active");document.querySelectorAll(".blog-card-modern").forEach(c=>c.hidden=b.dataset.filter!=="Todos"&&c.dataset.category!==b.dataset.filter)}))}
-try{
- const response=await fetch(api);if(!response.ok)throw Error("Falha ao consultar artigos");const files=await response.json();
- const articles=(await Promise.all(files.filter(f=>f.type==="file"&&f.name.endsWith(".md")).map(async f=>{const r=await fetch(f.download_url);return r.ok?parse(await r.text(),f.name):null}))).filter(Boolean).sort((a,b)=>b.date.localeCompare(a.date));
- const slug=new URLSearchParams(location.search).get("artigo");
- if(slug){
-  const a=articles.find(x=>x.slug===slug);if(!a){main.innerHTML='<p>Artigo não encontrado. <a href="blog.html">Voltar ao blog</a></p>';return}
-  const r=await fetch(raw+encodeURIComponent(slug)+".md");if(!r.ok)throw Error("Falha ao abrir artigo");const full=parse(await r.text(),slug+".md");
-  let body=full.body.replace(/^\s*#\s+([^\n]+)\s*\n+/,(all,h)=>h.trim().toLowerCase()===full.title.trim().toLowerCase()?"":all);
-  main.innerHTML=`<article class="cms-article"><a href="blog.html" class="blog-read-more">← Voltar ao blog</a><span class="blog-category">${esc(full.category)}</span><h1>${esc(full.title)}</h1><p class="cms-article-date">${esc(date(full.date))}</p>${`<img class="cms-article-cover" src="${esc(img(full.image)||fallbackImage(full.category))}" alt="${esc(full.title)}" onerror="this.hidden=true">` }${full.description?`<p class="cms-article-description">${esc(full.description)}</p>`:""}<div id="cms-article-content"></div></article>`;
-  const s=document.createElement("style");s.textContent=".cms-article{max-width:900px;margin:50px auto;padding:20px;color:#303746}.cms-article h1{font-size:clamp(30px,5vw,46px);line-height:1.2;margin:20px 0}.cms-article-cover{display:block;width:100%;max-height:500px;object-fit:cover;border-radius:16px;margin:25px 0}.cms-article-date{color:#777}.cms-article-description{font-size:19px;line-height:1.7}#cms-article-content{font-size:17px;line-height:1.85;margin-top:30px}#cms-article-content img{max-width:100%;height:auto;border-radius:12px}";document.head.appendChild(s);
-  const marked=await fetch("https://cdn.jsdelivr.net/npm/marked/marked.min.js").then(x=>x.text()),purify=await fetch("https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js").then(x=>x.text());
-  for(const src of [marked,purify]){const tag=document.createElement("script");tag.textContent=src;document.head.appendChild(tag)}
-  document.getElementById("cms-article-content").innerHTML=window.DOMPurify.sanitize(window.marked.parse(body));
-  document.title=full.seo_title||full.title+" | On Nature";const meta=document.querySelector('meta[name="description"]');if(meta)meta.content=full.seo_description||full.description;return;
- }
- const featured=articles.find(a=>a.slug==="licenciamento-ambiental-guia-empresa")||articles[0];
- if(featured){
-  const box=document.querySelector(".blog-featured");
-  if(box){
-   const picture=box.querySelector(".blog-featured__image"),content=box.querySelector(".blog-featured__content");
-   const cover=img(featured.image)||fallbackImage(featured.category);
-   if(picture)picture.style.backgroundImage="url("+JSON.stringify(cover)+")";
-   if(content)content.innerHTML="<span class=\"blog-category\">"+esc(featured.category)+"</span><h2>"+esc(featured.title)+"</h2><p>"+esc(featured.description)+"</p><a href=\"blog.html?artigo="+encodeURIComponent(featured.slug)+"\" class=\"blog-read-more\">Ler conteúdo →</a>";
-  }
- }
-const present=new Set(Array.from(grid.querySelectorAll('a[href*="artigo="]')).map(a=>new URL(a.href).searchParams.get("artigo")));
- articles.forEach(a=>{if(!present.has(a.slug))grid.appendChild(card(a))});filters();
-}catch(e){console.error("CMS blog:",e)}
-})();
-</script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js" defer></script>
+<script defer src="blog-cms.js?v=20261116-1"></script>
 </body>
 </html>
-
-</body></html>
