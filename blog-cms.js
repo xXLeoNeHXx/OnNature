@@ -355,7 +355,7 @@
     }
 
     if (posts.length) {
-      const featured = posts.find(item => item.slug === "licenciamento-ambiental-guia-empresa") || posts[0];
+      // fetchPublishedArticles() já ordena os artigos por data decrescente;\n      // o primeiro da lista é sempre o mais recente.\n      const featured = posts[0];
       renderFeatured(featured);
 
       const fragment = document.createDocumentFragment();
