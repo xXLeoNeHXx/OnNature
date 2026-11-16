@@ -27,7 +27,7 @@ collections:
     folder: "content/blog"
     create: true
     slug: "{{slug}}"
-    preview_path: "/blog/{{slug}}"
+    preview_path: "/blog.html?artigo={{slug}}"
     fields:
       - label: "Título"
         name: "title"
