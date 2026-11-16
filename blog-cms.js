@@ -178,16 +178,47 @@
     return card;
   }
 
-  function applyFilters() {
-    const buttons = Array.from(document.querySelectorAll(".blog-filter"));
-    buttons.forEach(button => {
+  function applyFilters(posts = []) {
+    const filters = document.querySelector(".blog-filters");
+    if (!filters) return;
+
+    // Monta as opções a partir das categorias realmente presentes nos artigos
+    // (incluindo os artigos já existentes no HTML e os carregados pelo CMS).
+    const categories = new Set();
+    grid.querySelectorAll(".blog-card-modern[data-category]").forEach(card => {
+      const category = String(card.dataset.category || "").trim();
+      if (category) categories.add(category);
+    });
+    posts.forEach(post => {
+      const category = String(post.category || "").trim();
+      if (category) categories.add(category);
+    });
+
+    filters.replaceChildren();
+    const options = ["Todos", ...Array.from(categories).sort((a, b) =>
+      a.localeCompare(b, "pt-BR")
+    )];
+
+    options.forEach(category => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "blog-filter" + (category === "Todos" ? " active" : "");
+      button.dataset.filter = category;
+      button.textContent = category === "Licenciamento Ambiental"
+        ? "Licenciamento"
+        : category === "Gestão de Resíduos"
+          ? "Resíduos"
+          : category;
       button.addEventListener("click", () => {
-        buttons.forEach(item => item.classList.toggle("active", item === button));
-        const filter = button.dataset.filter || "Todos";
+        filters.querySelectorAll(".blog-filter").forEach(item => {
+          item.classList.toggle("active", item === button);
+        });
         grid.querySelectorAll(".blog-card-modern").forEach(card => {
-          card.hidden = filter !== "Todos" && card.dataset.category !== filter;
+          const matches = category === "Todos" || card.dataset.category === category;
+          card.hidden = !matches;
         });
       });
+      filters.appendChild(button);
     });
   }
 
@@ -336,7 +367,7 @@
       grid.insertBefore(fragment, grid.firstChild);
     }
 
-    applyFilters();
+    applyFilters(posts);
   }
 
   init().catch(error => {
