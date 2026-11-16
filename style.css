@@ -1660,3 +1660,9 @@ footer {
   color: #3d3d52;
   border-color: #ffffff;
 }
+
+
+/* Título visível da página Nossos Valores */
+#valores > .seo-page-title--dark {
+  color: #3d3d52 !important;
+}
