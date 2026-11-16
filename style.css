@@ -1612,3 +1612,51 @@ footer {
 @media(max-width:800px){.service-modern{padding:1.3rem 1rem 2.5rem}.service-hero{grid-template-columns:1fr;gap:1.7rem;padding:1.4rem 0 2.8rem}.service-hero__media{height:clamp(250px,65vw,420px);grid-row:1}.service-hero h1{font-size:clamp(2.35rem,10vw,3.5rem)}.service-feature-grid{grid-template-columns:1fr}.service-process{grid-template-columns:1fr;gap:1.8rem;padding:3.5rem .2rem}.service-contact{flex-direction:column;align-items:flex-start}.service-contact__actions{width:100%;flex-direction:row;flex-wrap:wrap}.service-contact__actions .service-cta{flex:1 1 200px}}
 @media(max-width:480px){.service-hero__actions{align-items:stretch;flex-direction:column}.service-hero__actions .service-cta{width:100%}.service-features{padding:2.5rem 1rem;border-radius:18px}.service-feature{padding:1.35rem;min-height:0}.service-contact{padding:2rem 1.2rem}.service-contact__actions{flex-direction:column}.service-contact__actions .service-cta{width:100%}}
 @media(prefers-reduced-motion:reduce){.service-cta,.service-cta__dot{animation:none;transition:none}}
+
+
+/* Ajustes finais dos botões das páginas de serviços */
+.service-hero__actions .service-cta--primary,
+.service-hero__actions .service-cta--secondary {
+  background-color: #3d3d52;
+  color: #e8d8c8;
+  border-color: #3d3d52;
+}
+.service-hero__actions .service-cta--primary:hover,
+.service-hero__actions .service-cta--secondary:hover {
+  background-color: #e8d8c8;
+  color: #3d3d52;
+  border-color: #e8d8c8;
+}
+
+/* Reproduz o brilho pulsante do botão do site oficial */
+.service-cta__dot {
+  background: currentColor;
+  box-shadow: 0 0 0 currentColor;
+  animation: serviceDotGlow 1.6s ease-in-out infinite;
+}
+@keyframes serviceDotGlow {
+  0%, 100% { box-shadow: 0 0 0 0 currentColor; }
+  50% { box-shadow: 0 0 6px 2px currentColor; }
+}
+
+/* CTA inferior: bege/roxo e branco/roxo com inversão completa no hover */
+.service-contact__actions .service-cta--light {
+  background-color: #e8d8c8;
+  color: #3d3d52;
+  border-color: #e8d8c8;
+}
+.service-contact__actions .service-cta--light:hover {
+  background-color: #3d3d52;
+  color: #e8d8c8;
+  border-color: #e8d8c8;
+}
+.service-contact__actions .service-cta--outline {
+  background-color: transparent;
+  color: #ffffff;
+  border-color: #ffffff;
+}
+.service-contact__actions .service-cta--outline:hover {
+  background-color: #ffffff;
+  color: #3d3d52;
+  border-color: #ffffff;
+}
