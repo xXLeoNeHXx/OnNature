@@ -2,7 +2,7 @@
   "use strict";
 
   const REPOSITORY = "xXLeoNeHXx/OnNature";
-  const BRANCH = "site-novo-blog-teste";
+  const BRANCH = "main";
   const CONTENTS_API = "https://api.github.com/repos/" + REPOSITORY +
     "/contents/content/blog?ref=" + encodeURIComponent(BRANCH);
 
