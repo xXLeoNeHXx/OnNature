@@ -188,7 +188,6 @@
 
   function applyFilters(posts = []) {
     const filters = document.querySelector(".blog-filters");
-    const featured = document.querySelector(".blog-featured");
     if (!filters) return;
 
     const categories = new Map();
@@ -221,15 +220,8 @@
         card.setAttribute("aria-hidden", matches ? "false" : "true");
       });
 
-      if (featured) {
-        const featuredCategory = normalizeCategory(
-          featured.dataset.category ||
-          featured.querySelector(".blog-featured__content .blog-category")?.textContent
-        );
-        const matches = selected === "todos" || featuredCategory === selected;
-        featured.style.display = matches ? "" : "none";
-        featured.setAttribute("aria-hidden", matches ? "false" : "true");
-      }
+      // O destaque superior permanece sempre visível.
+      // Os filtros controlam exclusivamente os mini cards da grade inferior.
     }
 
     options.forEach(category => {
