@@ -251,6 +251,8 @@
     style.id = "cms-article-styles";
     style.textContent = [
       ".cms-article{width:min(900px,100%);margin:0 auto;padding:3.5rem 1rem 4rem;color:var(--header,#303746)}",
+      ".cms-article > .blog-read-more{display:inline-block;margin:0 0 1.6rem;line-height:1.5}",
+      ".cms-article > .blog-category{display:block;margin:0 0 .7rem}",
       ".cms-article h1{font-size:clamp(2rem,4.2vw,3.1rem);line-height:1.14;margin:1.1rem 0 .8rem;color:var(--header)}",
       ".cms-article .cms-article-date{color:#777;margin:0 0 1.5rem}",
       ".cms-article .cms-article-cover{display:block;width:100%;max-height:520px;object-fit:cover;border-radius:18px;margin:1.5rem 0 2rem}",
