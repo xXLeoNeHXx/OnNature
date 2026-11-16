@@ -460,7 +460,7 @@ body > header {
    VALORES
 ========================================================= */
 #valores.valores-section {
-  background: var(--valores-bg);
+  background: var(--fundo-base);
   padding: 90px 20px;
 }
 
