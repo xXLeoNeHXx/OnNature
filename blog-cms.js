@@ -378,7 +378,9 @@
     }
 
     if (posts.length) {
-      // fetchPublishedArticles() já ordena os artigos por data decrescente;\n      // o primeiro da lista é sempre o mais recente.\n      const featured = posts[0];
+      // fetchPublishedArticles() já ordena os artigos por data decrescente;
+      // O primeiro da lista é sempre o mais recente.
+      const featured = posts[0];
       renderFeatured(featured);
 
       const fragment = document.createDocumentFragment();
