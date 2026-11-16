@@ -1412,3 +1412,43 @@ footer {
    ARTIGOS PUBLICADOS PELO DEC AP CMS
 ========================================================= */
 .blog-cms-notice{width:min(900px,100%);margin:1rem auto;padding:0 1rem;color:#666;font-size:.9rem}
+
+
+/* BLOG — filtros de categoria sempre em uma única linha */
+.blog-toolbar {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: .8rem;
+}
+
+.blog-filters {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: flex-start;
+  align-items: center;
+  gap: .5rem;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0 0 .35rem;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+
+.blog-filter {
+  flex: 0 0 auto;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .blog-toolbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .blog-filters {
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+  }
+}
