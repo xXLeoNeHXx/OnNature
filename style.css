@@ -1713,3 +1713,37 @@ footer {
 #servicos .servico-visual:hover img {
   transform: scale(1.055);
 }
+
+
+/* CTA do rodapé do Blog: mantém as cores e adiciona a bolinha pulsante */
+.blog-cta > a.btn-animado {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: .8rem 2rem .8rem 1.1rem;
+  background: var(--texto-header);
+  color: var(--header);
+  border: 1px solid transparent;
+  border-radius: 10px;
+  transition: none;
+}
+.blog-cta > a.btn-animado::after {
+  display: block;
+  width: 8px;
+  height: 8px;
+  right: 10px;
+  background: var(--header);
+  animation: pulseGlow 1.6s infinite ease-in-out;
+  transition: none;
+}
+.blog-cta > a.btn-animado:hover {
+  background: var(--texto-header);
+  color: var(--header);
+  border-color: transparent;
+}
+.blog-cta > a.btn-animado:hover::after {
+  width: 8px;
+  height: 8px;
+}
